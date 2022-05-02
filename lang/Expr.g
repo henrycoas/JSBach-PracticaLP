@@ -4,20 +4,19 @@ grammar Expr;
 root 
     : expr EOF ;
 
-stmt    
-    : ID ASSIGN expr
-    | READ ID
-    | WRITE (expr | ID | STRING)+
-    | REPRO ID
-    | IF expr LPAREN stmt* RPAREN (ELSE RPAREN stmt* LPAREN)?
-    | WHILE expr LPAREN stmt* RPAREN
-    | ID expr*
-    | ID
+stmt 
+    : ID ASSIGN expr                                            # assignStmt
+    | READ ID                                                   # readStmt
+    | WRITE (expr | ID | STRING)+                               # writeStmt
+    | REPRO ID                                                  # reproStmt
+    | IF expr LPAREN stmt* RPAREN (ELSE RPAREN stmt* LPAREN)?   # ifStmt
+    | WHILE expr LPAREN stmt* RPAREN                            # whileStmt
+    | ID expr*                                                  # procedureStmt
     ;
 
 // per processar cada instrucció
 expr 
-    : op=(PLUS|MINUS) expr      
+    : op=(PLUS|MINUS) expr                  
     | expr op=(MUL|DIV|MOD) expr          
     | expr op=(PLUS|MINUS) expr           
     | expr op=(EQ|NEQ|GT|GE|LT|LE) expr
