@@ -1,4 +1,4 @@
-# Generated from Expr.g by ANTLR 4.9.2
+# Generated from Expr.g by ANTLR 4.10.1
 # encoding: utf-8
 from antlr4 import *
 from io import StringIO
@@ -8,44 +8,40 @@ if sys.version_info[1] > 5:
 else:
 	from typing.io import TextIO
 
-
 def serializedATN():
-    with StringIO() as buf:
-        buf.write("\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\36")
-        buf.write("\\\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\3\2\3\2\3\2\3\3\3\3")
-        buf.write("\3\3\3\3\3\3\3\3\3\3\3\3\3\3\6\3\27\n\3\r\3\16\3\30\3")
-        buf.write("\3\3\3\3\3\3\3\3\3\3\3\7\3!\n\3\f\3\16\3$\13\3\3\3\3\3")
-        buf.write("\3\3\3\3\7\3*\n\3\f\3\16\3-\13\3\3\3\5\3\60\n\3\3\3\3")
-        buf.write("\3\3\3\3\3\7\3\66\n\3\f\3\16\39\13\3\3\3\3\3\3\3\3\3\7")
-        buf.write("\3?\n\3\f\3\16\3B\13\3\5\3D\n\3\3\4\3\4\3\4\3\4\5\4J\n")
-        buf.write("\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\7\4U\n\4\f\4\16")
-        buf.write("\4X\13\4\3\5\3\5\3\5\2\3\6\6\2\4\6\b\2\5\3\2\n\13\3\2")
-        buf.write("\f\16\3\2\4\t\2i\2\n\3\2\2\2\4C\3\2\2\2\6I\3\2\2\2\bY")
-        buf.write("\3\2\2\2\n\13\5\6\4\2\13\f\7\2\2\3\f\3\3\2\2\2\r\16\7")
-        buf.write("\34\2\2\16\17\7\3\2\2\17D\5\6\4\2\20\21\7\17\2\2\21D\7")
-        buf.write("\34\2\2\22\26\7\20\2\2\23\27\5\6\4\2\24\27\7\34\2\2\25")
-        buf.write("\27\7\35\2\2\26\23\3\2\2\2\26\24\3\2\2\2\26\25\3\2\2\2")
-        buf.write("\27\30\3\2\2\2\30\26\3\2\2\2\30\31\3\2\2\2\31D\3\2\2\2")
-        buf.write("\32\33\7\21\2\2\33D\7\34\2\2\34\35\7\22\2\2\35\36\5\6")
-        buf.write("\4\2\36\"\7\27\2\2\37!\5\4\3\2 \37\3\2\2\2!$\3\2\2\2\"")
-        buf.write(" \3\2\2\2\"#\3\2\2\2#%\3\2\2\2$\"\3\2\2\2%/\7\30\2\2&")
-        buf.write("\'\7\23\2\2\'+\7\30\2\2(*\5\4\3\2)(\3\2\2\2*-\3\2\2\2")
-        buf.write("+)\3\2\2\2+,\3\2\2\2,.\3\2\2\2-+\3\2\2\2.\60\7\27\2\2")
-        buf.write("/&\3\2\2\2/\60\3\2\2\2\60D\3\2\2\2\61\62\7\24\2\2\62\63")
-        buf.write("\5\6\4\2\63\67\7\27\2\2\64\66\5\4\3\2\65\64\3\2\2\2\66")
-        buf.write("9\3\2\2\2\67\65\3\2\2\2\678\3\2\2\28:\3\2\2\29\67\3\2")
-        buf.write("\2\2:;\7\30\2\2;D\3\2\2\2<@\7\34\2\2=?\5\6\4\2>=\3\2\2")
-        buf.write("\2?B\3\2\2\2@>\3\2\2\2@A\3\2\2\2AD\3\2\2\2B@\3\2\2\2C")
-        buf.write("\r\3\2\2\2C\20\3\2\2\2C\22\3\2\2\2C\32\3\2\2\2C\34\3\2")
-        buf.write("\2\2C\61\3\2\2\2C<\3\2\2\2D\5\3\2\2\2EF\b\4\1\2FG\t\2")
-        buf.write("\2\2GJ\5\6\4\7HJ\7\33\2\2IE\3\2\2\2IH\3\2\2\2JV\3\2\2")
-        buf.write("\2KL\f\6\2\2LM\t\3\2\2MU\5\6\4\7NO\f\5\2\2OP\t\2\2\2P")
-        buf.write("U\5\6\4\6QR\f\4\2\2RS\t\4\2\2SU\5\6\4\5TK\3\2\2\2TN\3")
-        buf.write("\2\2\2TQ\3\2\2\2UX\3\2\2\2VT\3\2\2\2VW\3\2\2\2W\7\3\2")
-        buf.write("\2\2XV\3\2\2\2YZ\7\34\2\2Z\t\3\2\2\2\r\26\30\"+/\67@C")
-        buf.write("ITV")
-        return buf.getvalue()
-
+    return [
+        4,1,29,90,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,1,0,1,0,1,0,1,1,1,1,1,
+        1,1,1,1,1,1,1,1,1,1,1,1,1,4,1,21,8,1,11,1,12,1,22,1,1,1,1,1,1,1,
+        1,1,1,1,1,5,1,31,8,1,10,1,12,1,34,9,1,1,1,1,1,1,1,1,1,5,1,40,8,1,
+        10,1,12,1,43,9,1,1,1,3,1,46,8,1,1,1,1,1,1,1,1,1,5,1,52,8,1,10,1,
+        12,1,55,9,1,1,1,1,1,1,1,1,1,5,1,61,8,1,10,1,12,1,64,9,1,3,1,66,8,
+        1,1,2,1,2,1,2,1,2,3,2,72,8,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,
+        5,2,83,8,2,10,2,12,2,86,9,2,1,3,1,3,1,3,0,1,4,4,0,2,4,6,0,3,1,0,
+        18,19,1,0,20,22,1,0,12,17,103,0,8,1,0,0,0,2,65,1,0,0,0,4,71,1,0,
+        0,0,6,87,1,0,0,0,8,9,3,4,2,0,9,10,5,0,0,1,10,1,1,0,0,0,11,12,5,26,
+        0,0,12,13,5,1,0,0,13,66,3,4,2,0,14,15,5,2,0,0,15,66,5,26,0,0,16,
+        20,5,3,0,0,17,21,3,4,2,0,18,21,5,26,0,0,19,21,5,27,0,0,20,17,1,0,
+        0,0,20,18,1,0,0,0,20,19,1,0,0,0,21,22,1,0,0,0,22,20,1,0,0,0,22,23,
+        1,0,0,0,23,66,1,0,0,0,24,25,5,4,0,0,25,66,5,26,0,0,26,27,5,5,0,0,
+        27,28,3,4,2,0,28,32,5,10,0,0,29,31,3,2,1,0,30,29,1,0,0,0,31,34,1,
+        0,0,0,32,30,1,0,0,0,32,33,1,0,0,0,33,35,1,0,0,0,34,32,1,0,0,0,35,
+        45,5,11,0,0,36,37,5,6,0,0,37,41,5,11,0,0,38,40,3,2,1,0,39,38,1,0,
+        0,0,40,43,1,0,0,0,41,39,1,0,0,0,41,42,1,0,0,0,42,44,1,0,0,0,43,41,
+        1,0,0,0,44,46,5,10,0,0,45,36,1,0,0,0,45,46,1,0,0,0,46,66,1,0,0,0,
+        47,48,5,7,0,0,48,49,3,4,2,0,49,53,5,10,0,0,50,52,3,2,1,0,51,50,1,
+        0,0,0,52,55,1,0,0,0,53,51,1,0,0,0,53,54,1,0,0,0,54,56,1,0,0,0,55,
+        53,1,0,0,0,56,57,5,11,0,0,57,66,1,0,0,0,58,62,5,26,0,0,59,61,3,4,
+        2,0,60,59,1,0,0,0,61,64,1,0,0,0,62,60,1,0,0,0,62,63,1,0,0,0,63,66,
+        1,0,0,0,64,62,1,0,0,0,65,11,1,0,0,0,65,14,1,0,0,0,65,16,1,0,0,0,
+        65,24,1,0,0,0,65,26,1,0,0,0,65,47,1,0,0,0,65,58,1,0,0,0,66,3,1,0,
+        0,0,67,68,6,2,-1,0,68,69,7,0,0,0,69,72,3,4,2,5,70,72,5,24,0,0,71,
+        67,1,0,0,0,71,70,1,0,0,0,72,84,1,0,0,0,73,74,10,4,0,0,74,75,7,1,
+        0,0,75,83,3,4,2,5,76,77,10,3,0,0,77,78,7,0,0,0,78,83,3,4,2,4,79,
+        80,10,2,0,0,80,81,7,2,0,0,81,83,3,4,2,3,82,73,1,0,0,0,82,76,1,0,
+        0,0,82,79,1,0,0,0,83,86,1,0,0,0,84,82,1,0,0,0,84,85,1,0,0,0,85,5,
+        1,0,0,0,86,84,1,0,0,0,87,88,5,26,0,0,88,7,1,0,0,0,11,20,22,32,41,
+        45,53,62,65,71,82,84
+    ]
 
 class ExprParser ( Parser ):
 
@@ -57,16 +53,16 @@ class ExprParser ( Parser ):
 
     sharedContextCache = PredictionContextCache()
 
-    literalNames = [ "<INVALID>", "'<-'", "'='", "'/='", "'>'", "'<'", "'>='", 
-                     "'<='", "'+'", "'-'", "'*'", "'/'", "'%'", "'<?>'", 
-                     "'<!>'", "'<:>'", "'if'", "'else'", "'while'", "'<<'", 
-                     "'8<'", "'|:'", "':|'" ]
+    literalNames = [ "<INVALID>", "'<-'", "'<?>'", "'<!>'", "'<:>'", "'if'", 
+                     "'else'", "'while'", "'<<'", "'8<'", "'|:'", "':|'", 
+                     "'='", "'/='", "'>'", "'<'", "'>='", "'<='", "'+'", 
+                     "'-'", "'*'", "'/'", "'%'" ]
 
-    symbolicNames = [ "<INVALID>", "ASSIGN", "EQ", "NEQ", "GT", "LT", "GE", 
-                      "LE", "PLUS", "MINUS", "MUL", "DIV", "MOD", "READ", 
-                      "WRITE", "REPRO", "IF", "ELSE", "WHILE", "CONCAT", 
-                      "CUT", "LPAREN", "RPAREN", "DIGIT", "LETTER", "NUMBER", 
-                      "ID", "STRING", "WS" ]
+    symbolicNames = [ "<INVALID>", "ASSIGN", "READ", "WRITE", "REPRO", "IF", 
+                      "ELSE", "WHILE", "CONCAT", "CUT", "LPAREN", "RPAREN", 
+                      "EQ", "NEQ", "GT", "LT", "GE", "LE", "PLUS", "MINUS", 
+                      "MUL", "DIV", "MOD", "LETTER", "NUMBER", "BOOLEAN", 
+                      "ID", "STRING", "WORD", "WS" ]
 
     RULE_root = 0
     RULE_stmt = 1
@@ -77,37 +73,38 @@ class ExprParser ( Parser ):
 
     EOF = Token.EOF
     ASSIGN=1
-    EQ=2
-    NEQ=3
-    GT=4
-    LT=5
-    GE=6
-    LE=7
-    PLUS=8
-    MINUS=9
-    MUL=10
-    DIV=11
-    MOD=12
-    READ=13
-    WRITE=14
-    REPRO=15
-    IF=16
-    ELSE=17
-    WHILE=18
-    CONCAT=19
-    CUT=20
-    LPAREN=21
-    RPAREN=22
-    DIGIT=23
-    LETTER=24
-    NUMBER=25
+    READ=2
+    WRITE=3
+    REPRO=4
+    IF=5
+    ELSE=6
+    WHILE=7
+    CONCAT=8
+    CUT=9
+    LPAREN=10
+    RPAREN=11
+    EQ=12
+    NEQ=13
+    GT=14
+    LT=15
+    GE=16
+    LE=17
+    PLUS=18
+    MINUS=19
+    MUL=20
+    DIV=21
+    MOD=22
+    LETTER=23
+    NUMBER=24
+    BOOLEAN=25
     ID=26
     STRING=27
-    WS=28
+    WORD=28
+    WS=29
 
     def __init__(self, input:TokenStream, output:TextIO = sys.stdout):
         super().__init__(input, output)
-        self.checkVersion("4.9.2")
+        self.checkVersion("4.10.1")
         self._interp = ParserATNSimulator(self, self.atn, self.decisionsToDFA, self.sharedContextCache)
         self._predicates = None
 
@@ -130,6 +127,12 @@ class ExprParser ( Parser ):
 
         def getRuleIndex(self):
             return ExprParser.RULE_root
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitRoot" ):
+                return visitor.visitRoot(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -192,6 +195,12 @@ class ExprParser ( Parser ):
                 return self.getTypedRuleContext(ExprParser.StmtContext,i)
 
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitWhileStmt" ):
+                return visitor.visitWhileStmt(self)
+            else:
+                return visitor.visitChildren(self)
+
 
     class ReadStmtContext(StmtContext):
 
@@ -204,6 +213,12 @@ class ExprParser ( Parser ):
         def ID(self):
             return self.getToken(ExprParser.ID, 0)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitReadStmt" ):
+                return visitor.visitReadStmt(self)
+            else:
+                return visitor.visitChildren(self)
+
 
     class ReproStmtContext(StmtContext):
 
@@ -215,6 +230,12 @@ class ExprParser ( Parser ):
             return self.getToken(ExprParser.REPRO, 0)
         def ID(self):
             return self.getToken(ExprParser.ID, 0)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitReproStmt" ):
+                return visitor.visitReproStmt(self)
+            else:
+                return visitor.visitChildren(self)
 
 
     class IfStmtContext(StmtContext):
@@ -247,6 +268,12 @@ class ExprParser ( Parser ):
         def ELSE(self):
             return self.getToken(ExprParser.ELSE, 0)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitIfStmt" ):
+                return visitor.visitIfStmt(self)
+            else:
+                return visitor.visitChildren(self)
+
 
     class ProcedureStmtContext(StmtContext):
 
@@ -263,6 +290,12 @@ class ExprParser ( Parser ):
                 return self.getTypedRuleContext(ExprParser.ExprContext,i)
 
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitProcedureStmt" ):
+                return visitor.visitProcedureStmt(self)
+            else:
+                return visitor.visitChildren(self)
+
 
     class AssignStmtContext(StmtContext):
 
@@ -277,6 +310,12 @@ class ExprParser ( Parser ):
         def expr(self):
             return self.getTypedRuleContext(ExprParser.ExprContext,0)
 
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitAssignStmt" ):
+                return visitor.visitAssignStmt(self)
+            else:
+                return visitor.visitChildren(self)
 
 
     class WriteStmtContext(StmtContext):
@@ -303,6 +342,12 @@ class ExprParser ( Parser ):
                 return self.getTokens(ExprParser.STRING)
             else:
                 return self.getToken(ExprParser.STRING, i)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitWriteStmt" ):
+                return visitor.visitWriteStmt(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -530,6 +575,12 @@ class ExprParser ( Parser ):
         def getRuleIndex(self):
             return ExprParser.RULE_expr
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitExpr" ):
+                return visitor.visitExpr(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
     def expr(self, _p:int=0):
@@ -659,6 +710,12 @@ class ExprParser ( Parser ):
 
         def getRuleIndex(self):
             return ExprParser.RULE_leftExpr
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitLeftExpr" ):
+                return visitor.visitLeftExpr(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
