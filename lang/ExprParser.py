@@ -527,7 +527,60 @@ class ExprParser ( Parser ):
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
             self.parser = parser
+
+
+        def getRuleIndex(self):
+            return ExprParser.RULE_expr
+
+     
+        def copyFrom(self, ctx:ParserRuleContext):
+            super().copyFrom(ctx)
+
+
+    class UnaryExprContext(ExprContext):
+
+        def __init__(self, parser, ctx:ParserRuleContext): # actually a ExprParser.ExprContext
+            super().__init__(parser)
             self.op = None # Token
+            self.copyFrom(ctx)
+
+        def expr(self):
+            return self.getTypedRuleContext(ExprParser.ExprContext,0)
+
+        def PLUS(self):
+            return self.getToken(ExprParser.PLUS, 0)
+        def MINUS(self):
+            return self.getToken(ExprParser.MINUS, 0)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitUnaryExpr" ):
+                return visitor.visitUnaryExpr(self)
+            else:
+                return visitor.visitChildren(self)
+
+
+    class ValueExprContext(ExprContext):
+
+        def __init__(self, parser, ctx:ParserRuleContext): # actually a ExprParser.ExprContext
+            super().__init__(parser)
+            self.copyFrom(ctx)
+
+        def NUMBER(self):
+            return self.getToken(ExprParser.NUMBER, 0)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitValueExpr" ):
+                return visitor.visitValueExpr(self)
+            else:
+                return visitor.visitChildren(self)
+
+
+    class ArithmeticExprContext(ExprContext):
+
+        def __init__(self, parser, ctx:ParserRuleContext): # actually a ExprParser.ExprContext
+            super().__init__(parser)
+            self.op = None # Token
+            self.copyFrom(ctx)
 
         def expr(self, i:int=None):
             if i is None:
@@ -535,49 +588,53 @@ class ExprParser ( Parser ):
             else:
                 return self.getTypedRuleContext(ExprParser.ExprContext,i)
 
-
+        def MUL(self):
+            return self.getToken(ExprParser.MUL, 0)
+        def DIV(self):
+            return self.getToken(ExprParser.DIV, 0)
+        def MOD(self):
+            return self.getToken(ExprParser.MOD, 0)
         def PLUS(self):
             return self.getToken(ExprParser.PLUS, 0)
-
         def MINUS(self):
             return self.getToken(ExprParser.MINUS, 0)
 
-        def NUMBER(self):
-            return self.getToken(ExprParser.NUMBER, 0)
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitArithmeticExpr" ):
+                return visitor.visitArithmeticExpr(self)
+            else:
+                return visitor.visitChildren(self)
 
-        def MUL(self):
-            return self.getToken(ExprParser.MUL, 0)
 
-        def DIV(self):
-            return self.getToken(ExprParser.DIV, 0)
+    class RelationalExprContext(ExprContext):
 
-        def MOD(self):
-            return self.getToken(ExprParser.MOD, 0)
+        def __init__(self, parser, ctx:ParserRuleContext): # actually a ExprParser.ExprContext
+            super().__init__(parser)
+            self.op = None # Token
+            self.copyFrom(ctx)
+
+        def expr(self, i:int=None):
+            if i is None:
+                return self.getTypedRuleContexts(ExprParser.ExprContext)
+            else:
+                return self.getTypedRuleContext(ExprParser.ExprContext,i)
 
         def EQ(self):
             return self.getToken(ExprParser.EQ, 0)
-
         def NEQ(self):
             return self.getToken(ExprParser.NEQ, 0)
-
         def GT(self):
             return self.getToken(ExprParser.GT, 0)
-
         def GE(self):
             return self.getToken(ExprParser.GE, 0)
-
         def LT(self):
             return self.getToken(ExprParser.LT, 0)
-
         def LE(self):
             return self.getToken(ExprParser.LE, 0)
 
-        def getRuleIndex(self):
-            return ExprParser.RULE_expr
-
         def accept(self, visitor:ParseTreeVisitor):
-            if hasattr( visitor, "visitExpr" ):
-                return visitor.visitExpr(self)
+            if hasattr( visitor, "visitRelationalExpr" ):
+                return visitor.visitRelationalExpr(self)
             else:
                 return visitor.visitChildren(self)
 
@@ -597,6 +654,10 @@ class ExprParser ( Parser ):
             self._errHandler.sync(self)
             token = self._input.LA(1)
             if token in [ExprParser.PLUS, ExprParser.MINUS]:
+                localctx = ExprParser.UnaryExprContext(self, localctx)
+                self._ctx = localctx
+                _prevctx = localctx
+
                 self.state = 68
                 localctx.op = self._input.LT(1)
                 _la = self._input.LA(1)
@@ -609,6 +670,9 @@ class ExprParser ( Parser ):
                 self.expr(5)
                 pass
             elif token in [ExprParser.NUMBER]:
+                localctx = ExprParser.ValueExprContext(self, localctx)
+                self._ctx = localctx
+                _prevctx = localctx
                 self.state = 70
                 self.match(ExprParser.NUMBER)
                 pass
@@ -628,7 +692,7 @@ class ExprParser ( Parser ):
                     self._errHandler.sync(self)
                     la_ = self._interp.adaptivePredict(self._input,9,self._ctx)
                     if la_ == 1:
-                        localctx = ExprParser.ExprContext(self, _parentctx, _parentState)
+                        localctx = ExprParser.ArithmeticExprContext(self, ExprParser.ExprContext(self, _parentctx, _parentState))
                         self.pushNewRecursionContext(localctx, _startState, self.RULE_expr)
                         self.state = 73
                         if not self.precpred(self._ctx, 4):
@@ -647,7 +711,7 @@ class ExprParser ( Parser ):
                         pass
 
                     elif la_ == 2:
-                        localctx = ExprParser.ExprContext(self, _parentctx, _parentState)
+                        localctx = ExprParser.ArithmeticExprContext(self, ExprParser.ExprContext(self, _parentctx, _parentState))
                         self.pushNewRecursionContext(localctx, _startState, self.RULE_expr)
                         self.state = 76
                         if not self.precpred(self._ctx, 3):
@@ -666,7 +730,7 @@ class ExprParser ( Parser ):
                         pass
 
                     elif la_ == 3:
-                        localctx = ExprParser.ExprContext(self, _parentctx, _parentState)
+                        localctx = ExprParser.RelationalExprContext(self, ExprParser.ExprContext(self, _parentctx, _parentState))
                         self.pushNewRecursionContext(localctx, _startState, self.RULE_expr)
                         self.state = 79
                         if not self.precpred(self._ctx, 2):

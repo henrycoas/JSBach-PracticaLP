@@ -16,11 +16,11 @@ stmt
 
 // per processar cada instrucció
 expr 
-    : op=(PLUS|MINUS) expr                      //# unaryExpr   
-    | expr op=(MUL|DIV|MOD) expr                //# arithmeticExpr
-    | expr op=(PLUS|MINUS) expr                 //# arithmeticExpr
-    | expr op=(EQ|NEQ|GT|GE|LT|LE) expr         //# relationalExpr
-    | NUMBER                                    //# valueExpr
+    : op=(PLUS|MINUS) expr                      # unaryExpr   
+    | expr op=(MUL|DIV|MOD) expr                # arithmeticExpr
+    | expr op=(PLUS|MINUS) expr                 # arithmeticExpr
+    | expr op=(EQ|NEQ|GT|GE|LT|LE) expr         # relationalExpr
+    | NUMBER                                    # valueExpr
     ;
 
 leftExpr 

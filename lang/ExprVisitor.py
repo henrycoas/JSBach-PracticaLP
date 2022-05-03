@@ -8,13 +8,10 @@ else:
 # This class defines a complete generic visitor for a parse tree produced by ExprParser.
 
 class ExprVisitor(ParseTreeVisitor):
-    def __init__(self):
-        self.nivell = 0
 
     # Visit a parse tree produced by ExprParser#root.
     def visitRoot(self, ctx:ExprParser.RootContext):
-        l = list(ctx.getChildren())        
-        print(self.visit(l[0]))
+        return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ExprParser#assignStmt.
@@ -52,13 +49,24 @@ class ExprVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by ExprParser#expr.
-    def visitExpr(self, ctx:ExprParser.ExprContext):
-        l = list(ctx.getChildren())
-        if len(l) == 1:
-            return int(l[0].getText())
-        else:  # len(l) == 3
-            return self.visit(l[0]) + self.visit(l[2])
+    # Visit a parse tree produced by ExprParser#unaryExpr.
+    def visitUnaryExpr(self, ctx:ExprParser.UnaryExprContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by ExprParser#valueExpr.
+    def visitValueExpr(self, ctx:ExprParser.ValueExprContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by ExprParser#arithmeticExpr.
+    def visitArithmeticExpr(self, ctx:ExprParser.ArithmeticExprContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by ExprParser#relationalExpr.
+    def visitRelationalExpr(self, ctx:ExprParser.RelationalExprContext):
+        return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ExprParser#leftExpr.
