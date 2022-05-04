@@ -1,19 +1,23 @@
 grammar jsbach;
 
-/// Parser Rules
+/// Parser Rules (part gramàtica)
 
 // per processar el final de l'arxiu
 root 
-    : expr EOF ;
+    : procedure+ EOF ;
+
+procedure
+    : ID LPAREN stmt* RPAREN
+    ;
 
 stmt 
-    : leftExpr ASSIGN expr                                            # assignStmt
-    | READ ID                                                   # readStmt
-    | WRITE (expr | ID | STRING)+                               # writeStmt
-    | REPRO ID                                                  # reproStmt
+    : READ ident                                                # readStmt
+    | WRITE (expr | STRING)+                                    # writeStmt
+    | REPRO ident                                               # reproStmt
     | IF expr LPAREN stmt* RPAREN (ELSE RPAREN stmt* LPAREN)?   # ifStmt
     | WHILE expr LPAREN stmt* RPAREN                            # whileStmt
     | ID expr*                                                  # procedureStmt
+    | leftExpr ASSIGN expr                                      # assignStmt
     ;
 
 // per processar cada instrucció
@@ -24,6 +28,7 @@ expr
     | expr op=(PLUS|MINUS) expr                 # arithmeticExpr
     | expr op=(EQ|NEQ|GT|GE|LT|LE) expr         # relationalExpr
     | NUMBER                                    # valueExpr
+    | ID                                        # idExpr
     ;
 
 leftExpr 
@@ -34,7 +39,7 @@ ident
     : ID
     ;
 
-/// Lexer Rules
+/// Lexer Rules (part lèxica)
 
 ASSIGN  : '<-' ;
 
