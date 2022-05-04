@@ -1,11 +1,13 @@
-grammar Expr;
+grammar jsbach;
+
+/// Parser Rules
 
 // per processar el final de l'arxiu
 root 
     : expr EOF ;
 
 stmt 
-    : ID ASSIGN expr                                            # assignStmt
+    : leftExpr ASSIGN expr                                            # assignStmt
     | READ ID                                                   # readStmt
     | WRITE (expr | ID | STRING)+                               # writeStmt
     | REPRO ID                                                  # reproStmt
@@ -16,7 +18,8 @@ stmt
 
 // per processar cada instrucció
 expr 
-    : op=(PLUS|MINUS) expr                      # unaryExpr   
+    : '(' expr ')'                              # parenthesesExpr
+    | op=(PLUS|MINUS) expr                      # unaryExpr   
     | expr op=(MUL|DIV|MOD) expr                # arithmeticExpr
     | expr op=(PLUS|MINUS) expr                 # arithmeticExpr
     | expr op=(EQ|NEQ|GT|GE|LT|LE) expr         # relationalExpr
@@ -24,8 +27,14 @@ expr
     ;
 
 leftExpr 
+    : ID                        #LeftExprId
+    ;
+
+ident
     : ID
     ;
+
+/// Lexer Rules
 
 ASSIGN  : '<-' ;
 

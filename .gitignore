@@ -1,0 +1,6 @@
+/lang/.antlr
+/lang/jsbach.interp
+/lang/jsbach.tokens
+/lang/jsbachLexer*
+/lang/jsbachParser.py
+/lang/__pycache__
