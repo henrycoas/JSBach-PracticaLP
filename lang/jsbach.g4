@@ -5,13 +5,13 @@ grammar jsbach;
 // per processar el final de l'arxiu
 // un arxiu es un conjunt de procediments
 root 
-    : procedure+ EOF ;
+    : procedureDef+ EOF ;
 
-procedure
-    : ID paramsList LPAREN stmt* RPAREN
+procedureDef
+    : ID paramsListDef LPAREN stmt* RPAREN
     ;
 
-paramsList
+paramsListDef
     : ID*
     ;
 
@@ -32,7 +32,7 @@ expr
     | expr op=(MUL|DIV|MOD) expr                # arithmeticExpr
     | expr op=(PLUS|MINUS) expr                 # arithmeticExpr
     | expr op=(EQ|NEQ|GT|GE|LT|LE) expr         # relationalExpr
-    | (NUMBER | STRING)                         # valueExpr
+    | (NUMBER | STRING | BOOLEAN)               # valueExpr
     | ID                                        # idExpr
     ;
 

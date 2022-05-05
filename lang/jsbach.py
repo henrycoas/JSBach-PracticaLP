@@ -16,6 +16,7 @@ else:
 class BachVisitor(jsbachVisitor):
 
     dictionary = {}
+    procedures = {}
 
     def __init__(self):
         self.nivell = 0
@@ -25,6 +26,23 @@ class BachVisitor(jsbachVisitor):
     def visitRoot(self, ctx:jsbachParser.RootContext):
         l = list(ctx.getChildren())
         print(self.visit(l[0]))
+
+
+    # Visit a parse tree produced by jsbachParser#procedureDef.
+    def visitProcedureDef(self, ctx:jsbachParser.ProcedureDefContext):
+        procId = self.visit(ctx.ID())
+        nparams = 0
+        if ctx.paramsListDef():
+            nparams = self.visit(ctx.paramsListDef())
+        self.procedures[procId] = nparams
+
+
+    # Visit a parse tree produced by jsbachParser#paramsListDef.
+    def visitParamsListDef(self, ctx:jsbachParser.ParamsListDefContext):
+        params = list(ctx.getChildren())
+        for p in params:
+            self.dictionary[p] = 0
+        return len(params)
 
 
     # Visit a parse tree produced by jsbachParser#assignStmt.
@@ -50,6 +68,22 @@ class BachVisitor(jsbachVisitor):
         self.dictionary[id] = inputValue
 
 
+    # Visit a parse tree produced by jsbachParser#ifStmt.
+    def visitIfStmt(self, ctx:jsbachParser.IfStmtContext):
+        boolExpr = self.visit(ctx.expr())
+        if boolExpr == 1:
+            self.visit(ctx.stmt(0))
+        else:
+            if ctx.ELSE():
+                self.visit(ctx.stmt(1))
+
+
+    # Visit a parse tree produced by jsbachParser#whileStmt.
+    def visitWhileStmt(self, ctx:jsbachParser.WhileStmtContext):
+        while self.visit(ctx.expr()):
+            self.visit(ctx.stmt())
+
+
     # Visit a parse tree produced by jsbachParser#valueExpr.
     def visitValueExpr(self, ctx:jsbachParser.ValueExprContext):
         # len(l) == 1
@@ -57,6 +91,27 @@ class BachVisitor(jsbachVisitor):
             return int(ctx.NUMBER().getText())
         elif ctx.STRING():
             return ctx.STRING().getText().replace('"','')
+        elif ctx.BOOLEAN():
+            return int(ctx.BOOLEAN().getText())
+
+
+    # Visit a parse tree produced by jsbachParser#relationalExpr.
+    def visitRelationalExpr(self, ctx:jsbachParser.RelationalExprContext):
+        expr1, op, expr2 =  list(ctx.getChildren())
+        if ctx.EQ():
+            retValue = self.visit(expr1) == self.visit(expr2)
+        elif ctx.NEQ():
+            retValue = self.visit(expr1) != self.visit(expr2)
+        elif ctx.GT():
+            retValue = self.visit(expr1) > self.visit(expr2)
+        elif ctx.GE():
+            retValue = self.visit(expr1) >= self.visit(expr2)
+        elif ctx.LT():
+            retValue = self.visit(expr1) <= self.visit(expr2)
+        elif ctx.LE():
+            retValue = self.visit(expr1) < self.visit(expr2)
+        
+        return 1 if retValue else 0
 
 
     # Visit a parse tree produced by jsbachParser#arithmeticExpr.
@@ -75,6 +130,8 @@ class BachVisitor(jsbachVisitor):
                 print("Division durch Null (divisió entre 0, pels que no saben alemà)")
                 return 0
             return self.visit(expr1) / valueExpr2
+        elif ctx.MOD():
+            return self.visit(expr1) % self.visit(expr2)
 
 
     # Visit a parse tree produced by jsbachParser#idExpr.

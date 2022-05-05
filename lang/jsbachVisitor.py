@@ -14,13 +14,13 @@ class jsbachVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by jsbachParser#procedure.
-    def visitProcedure(self, ctx:jsbachParser.ProcedureContext):
+    # Visit a parse tree produced by jsbachParser#procedureDef.
+    def visitProcedureDef(self, ctx:jsbachParser.ProcedureDefContext):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by jsbachParser#paramsList.
-    def visitParamsList(self, ctx:jsbachParser.ParamsListContext):
+    # Visit a parse tree produced by jsbachParser#paramsListDef.
+    def visitParamsListDef(self, ctx:jsbachParser.ParamsListDefContext):
         return self.visitChildren(ctx)
 
 
