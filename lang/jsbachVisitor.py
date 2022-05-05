@@ -1,4 +1,4 @@
-# Generated from jsbach.g4 by ANTLR 4.7.1
+# Generated from jsbach.g4 by ANTLR 4.10.1
 from antlr4 import *
 if __name__ is not None and "." in __name__:
     from .jsbachParser import jsbachParser
@@ -16,6 +16,11 @@ class jsbachVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by jsbachParser#procedure.
     def visitProcedure(self, ctx:jsbachParser.ProcedureContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by jsbachParser#paramsList.
+    def visitParamsList(self, ctx:jsbachParser.ParamsListContext):
         return self.visitChildren(ctx)
 
 
@@ -44,8 +49,8 @@ class jsbachVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by jsbachParser#procedureStmt.
-    def visitProcedureStmt(self, ctx:jsbachParser.ProcedureStmtContext):
+    # Visit a parse tree produced by jsbachParser#procCallStmt.
+    def visitProcCallStmt(self, ctx:jsbachParser.ProcCallStmtContext):
         return self.visitChildren(ctx)
 
 

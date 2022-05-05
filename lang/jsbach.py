@@ -1,3 +1,4 @@
+from lib2to3.pgen2.token import STRING
 import sys
 from antlr4 import *
 
@@ -19,29 +20,43 @@ class BachVisitor(jsbachVisitor):
     def __init__(self):
         self.nivell = 0
 
+
     # Visit a parse tree produced by jsbachParser#root.
     def visitRoot(self, ctx:jsbachParser.RootContext):
         l = list(ctx.getChildren())
         print(self.visit(l[0]))
 
+
     # Visit a parse tree produced by jsbachParser#assignStmt.
     def visitAssignStmt(self, ctx:jsbachParser.AssignStmtContext):
         expr = self.visit(ctx.expr())
         leftExpr = self.visit(ctx.leftExpr())
-        dictionary[leftExpr] = expr
+        self.dictionary[leftExpr] = expr
+
 
     # Visit a parse tree produced by jsbachParser#writeStmt.
     def visitWriteStmt(self, ctx:jsbachParser.WriteStmtContext):
         l = list(ctx.getChildren())
-        print(43)
-        for expr in l[1:]:
-            print(self.visit(expr).getText())
+        # l[0] is WRITE
+        for out in l[1:]:
+            print(self.visit(out), end=" ")
+        print()
+
+
+    # Visit a parse tree produced by jsbachParser#readStmt.
+    def visitReadStmt(self, ctx:jsbachParser.ReadStmtContext):
+        id = ctx.ID().getText()
+        inputValue = input()
+        self.dictionary[id] = inputValue
 
 
     # Visit a parse tree produced by jsbachParser#valueExpr.
     def visitValueExpr(self, ctx:jsbachParser.ValueExprContext):
         # len(l) == 1
-        return int(ctx.NUMBER().getText())
+        if ctx.NUMBER():
+            return int(ctx.NUMBER().getText())
+        elif ctx.STRING():
+            return ctx.STRING().getText().replace('"','')
 
 
     # Visit a parse tree produced by jsbachParser#arithmeticExpr.
@@ -65,15 +80,13 @@ class BachVisitor(jsbachVisitor):
     # Visit a parse tree produced by jsbachParser#idExpr.
     def visitIdExpr(self, ctx:jsbachParser.IdExprContext):
         id = ctx.ID().getText()
-        print(id)
-        return dictionary[id]
+        return self.dictionary[id]
 
 
     # Visit a parse tree produced by jsbachParser#LeftExprId.
     def visitLeftExprId(self, ctx:jsbachParser.LeftExprIdContext):
         id = ctx.ID().getText()
-        print(id)
-        return dictionary[id]
+        return self.dictionary[id]
 
 
 
