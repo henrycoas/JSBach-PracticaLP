@@ -1,6 +1,9 @@
-Main |:
-    <!> 23 "pepe"
-    <!> "jo" 3 "ju"
-    <!> 3 > 3
-    if 2 == 2 |: <!> "hola" :|
+~~~ Cartofen kommentar
+
+Patata a b |:
+    <!> "This is aux"
+:|
+
+Main a b c |:
+    <!> "Writing is still fine."
 :|

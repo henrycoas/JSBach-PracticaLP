@@ -8,20 +8,20 @@ root
     : procedureDef+ EOF ;
 
 procedureDef
-    : ID paramsListDef LPAREN stmt* RPAREN
+    : PROCID paramsListDef LPAREN stmt* RPAREN
     ;
 
 paramsListDef
-    : ID*
+    : VARID*
     ;
 
 stmt 
-    : READ ID                                                   # readStmt
+    : READ VARID                                                   # readStmt
     | WRITE expr+                                               # writeStmt
     | REPRO ident                                               # reproStmt
     | IF expr LPAREN stmt* RPAREN (ELSE RPAREN stmt* LPAREN)?   # ifStmt
     | WHILE expr LPAREN stmt* RPAREN                            # whileStmt
-    | ID expr*                                                  # procCallStmt
+    | PROCID expr*                                                  # procCallStmt
     | leftExpr ASSIGN expr                                      # assignStmt
     ;
 
@@ -33,15 +33,20 @@ expr
     | expr op=(PLUS|MINUS) expr                 # arithmeticExpr
     | expr op=(EQ|NEQ|GT|GE|LT|LE) expr         # relationalExpr
     | (NUMBER | STRING | BOOLEAN)               # valueExpr
-    | ID                                        # idExpr
+    | (PROCID | VARID)                          # idExpr
+    | listId                                    # idExpr
     ;
 
 leftExpr 
-    : ID                        #LeftExprId
+    : VARID                        #LeftExprId
     ;
 
 ident
-    : ID
+    : (PROCID | VARID | NOTE)
+    ;
+
+listId
+    : '{' (VARID* | NOTE*) '}'
     ;
 
 /// Lexer Rules (part lèxica)
@@ -75,13 +80,21 @@ MUL     : '*' ;
 DIV     : '/' ;
 MOD     : '%' ;
 
+NOTE    : ('A'|'B'|'C'|'D'|'E'|'F'|'G') ;
+
 fragment
 DIGIT   : '0'..'9' ;
 fragment
 LETTER  : [a-zA-Z] ;
+fragment
+LOWERCASE  : [a-z] ;
+fragment
+UPPERCASE  : [A-Z] ;
+
 NUMBER  : (DIGIT)+ ;
 BOOLEAN : ('0' | '1') ;
-ID      : LETTER (LETTER | DIGIT)* ;
+PROCID      : UPPERCASE (LETTER | DIGIT)* ;
+VARID      : LOWERCASE (LETTER | DIGIT)* ;
 
 fragment
 ESC_SEQ : '\\' ('b'|'t'|'n'|'f'|'r'|'"'|'\''|'\\') ;
@@ -92,3 +105,7 @@ STRING  : '"' ( ESC_SEQ | ~('\\'|'"') )* '"' ;
 WORD    : [a-zA-Z\u0080-\u00FF]+ ;
 
 WS      : [ \t\n]+ -> skip ;
+
+COMMENT
+    : '~~~' ~( '\r' | '\n' )* -> skip
+    ;

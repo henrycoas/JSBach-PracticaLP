@@ -1,5 +1,5 @@
-from lib2to3.pgen2.token import STRING
 import sys
+import pdb
 from antlr4 import *
 
 if __name__ is not None and "." in __name__:
@@ -15,8 +15,12 @@ else:
 
 class BachVisitor(jsbachVisitor):
 
-    dictionary = {}
-    procedures = {}
+    # key: varName, value: variable value
+    currentScopeVars = {}
+    # key: procName, value: list of the params
+    definedProcedures = {}
+    # notes added by the REPRO stmt
+    musicSheet = []
 
     def __init__(self):
         self.nivell = 0
@@ -24,32 +28,33 @@ class BachVisitor(jsbachVisitor):
 
     # Visit a parse tree produced by jsbachParser#root.
     def visitRoot(self, ctx:jsbachParser.RootContext):
-        l = list(ctx.getChildren())
-        print(self.visit(l[0]))
+        self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by jsbachParser#procedureDef.
     def visitProcedureDef(self, ctx:jsbachParser.ProcedureDefContext):
         procId = self.visit(ctx.ID())
-        nparams = 0
-        if ctx.paramsListDef():
-            nparams = self.visit(ctx.paramsListDef())
-        self.procedures[procId] = nparams
+        params = self.visit(ctx.paramsListDef())
+        # save the procedure name with the parameters
+        self.definedProcedures[procId] = params
+        for stmt in ctx.stmt():
+            self.visit(stmt)
 
 
     # Visit a parse tree produced by jsbachParser#paramsListDef.
     def visitParamsListDef(self, ctx:jsbachParser.ParamsListDefContext):
         params = list(ctx.getChildren())
+        # save each parameter with value 0
         for p in params:
-            self.dictionary[p] = 0
-        return len(params)
+            self.currentScopeVars[p] = 0
+        return params
 
 
     # Visit a parse tree produced by jsbachParser#assignStmt.
     def visitAssignStmt(self, ctx:jsbachParser.AssignStmtContext):
         expr = self.visit(ctx.expr())
         leftExpr = self.visit(ctx.leftExpr())
-        self.dictionary[leftExpr] = expr
+        self.currentScopeVars[leftExpr] = expr
 
 
     # Visit a parse tree produced by jsbachParser#writeStmt.
@@ -65,7 +70,7 @@ class BachVisitor(jsbachVisitor):
     def visitReadStmt(self, ctx:jsbachParser.ReadStmtContext):
         id = ctx.ID().getText()
         inputValue = input()
-        self.dictionary[id] = inputValue
+        self.currentScopeVars[id] = inputValue
 
 
     # Visit a parse tree produced by jsbachParser#ifStmt.
@@ -82,6 +87,17 @@ class BachVisitor(jsbachVisitor):
     def visitWhileStmt(self, ctx:jsbachParser.WhileStmtContext):
         while self.visit(ctx.expr()):
             self.visit(ctx.stmt())
+
+    # Visit a parse tree produced by jsbachParser#procCallStmt.
+    def visitProcCallStmt(self, ctx:jsbachParser.ProcCallStmtContext):
+        l = list(ctx.getChildren())
+        procName = l[0]
+        # EXC: procedureName does not exist
+        # EXC: #params passed != #params needed
+        for param in l[1:]:
+            # self.definedProcedures[]
+            # self.currentScopeVars[]
+            return
 
 
     # Visit a parse tree produced by jsbachParser#valueExpr.
@@ -116,8 +132,9 @@ class BachVisitor(jsbachVisitor):
 
     # Visit a parse tree produced by jsbachParser#arithmeticExpr.
     def visitArithmeticExpr(self, ctx:jsbachParser.ArithmeticExprContext):
-        expr1, op, expr2 = list(ctx.getChildren())
         # len(list) == 3
+        expr1, op, expr2 = list(ctx.getChildren())
+        
         if ctx.PLUS():
             return self.visit(expr1) + self.visit(expr2)
         elif ctx.MINUS():
@@ -127,7 +144,7 @@ class BachVisitor(jsbachVisitor):
         elif ctx.DIV():
             valueExpr2 = self.visit(expr2)
             if valueExpr2 == 0:
-                print("Division durch Null (divisió entre 0, pels que no saben alemà)")
+                # EXC: Division durch Null (divisió entre 0, pels que no saben alemà)
                 return 0
             return self.visit(expr1) / valueExpr2
         elif ctx.MOD():
@@ -137,15 +154,13 @@ class BachVisitor(jsbachVisitor):
     # Visit a parse tree produced by jsbachParser#idExpr.
     def visitIdExpr(self, ctx:jsbachParser.IdExprContext):
         id = ctx.ID().getText()
-        return self.dictionary[id]
+        return self.currentScopeVars[id]  
 
 
     # Visit a parse tree produced by jsbachParser#LeftExprId.
     def visitLeftExprId(self, ctx:jsbachParser.LeftExprIdContext):
         id = ctx.ID().getText()
-        return self.dictionary[id]
-
-
+        return self.currentScopeVars[id]
 
 input_stream = FileStream(sys.argv[1])
 
