@@ -99,5 +99,10 @@ class jsbachVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by jsbachParser#listId.
+    def visitListId(self, ctx:jsbachParser.ListIdContext):
+        return self.visitChildren(ctx)
+
+
 
 del jsbachParser

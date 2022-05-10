@@ -1,9 +1,10 @@
-~~~ Cartofen kommentar
+~~~ Cartofen kommentar ~~~
 
-Patata a b |:
+Patata |:
     <!> "This is aux"
 :|
 
-Main a b c |:
-    <!> "Writing is still fine."
+Main |:
+    <!> "Writing is still fine, says Main."
+    Patata
 :|

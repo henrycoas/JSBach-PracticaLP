@@ -19,6 +19,8 @@ class BachVisitor(jsbachVisitor):
     currentScopeVars = {}
     # key: procName, value: list of the params
     definedProcedures = {}
+    # key: procName, value: ctx
+    procsContexts = {}
     # notes added by the REPRO stmt
     musicSheet = []
 
@@ -33,12 +35,16 @@ class BachVisitor(jsbachVisitor):
 
     # Visit a parse tree produced by jsbachParser#procedureDef.
     def visitProcedureDef(self, ctx:jsbachParser.ProcedureDefContext):
-        procId = self.visit(ctx.ID())
+        procId = ctx.PROCID().getText()
         params = self.visit(ctx.paramsListDef())
         # save the procedure name with the parameters
         self.definedProcedures[procId] = params
-        for stmt in ctx.stmt():
-            self.visit(stmt)
+        print(procId)
+        if procId == "Main":
+            for stmt in ctx.stmt():
+                self.visit(stmt)
+        else:
+            self.procsContexts[procId] = ctx
 
 
     # Visit a parse tree produced by jsbachParser#paramsListDef.
@@ -68,7 +74,7 @@ class BachVisitor(jsbachVisitor):
 
     # Visit a parse tree produced by jsbachParser#readStmt.
     def visitReadStmt(self, ctx:jsbachParser.ReadStmtContext):
-        id = ctx.ID().getText()
+        id = ctx.VARID().getText()
         inputValue = input()
         self.currentScopeVars[id] = inputValue
 
@@ -153,14 +159,23 @@ class BachVisitor(jsbachVisitor):
 
     # Visit a parse tree produced by jsbachParser#idExpr.
     def visitIdExpr(self, ctx:jsbachParser.IdExprContext):
-        id = ctx.ID().getText()
-        return self.currentScopeVars[id]  
+        if ctx.VARID():
+            varId = ctx.VARID().getText()
+            return self.currentScopeVars[varId]  
+        elif ctx.PROCID():
+            procId = ctx.PROCID().getText()
+            procCtx = self.procsContexts[procId]
+            self.visit(procCtx.paramsListDef())
+            for stmt in procCtx.stmt():
+                self.visit(stmt)
+        elif ctx.listId():
+            self.visit(ctx.listId())
 
 
     # Visit a parse tree produced by jsbachParser#LeftExprId.
     def visitLeftExprId(self, ctx:jsbachParser.LeftExprIdContext):
-        id = ctx.ID().getText()
-        return self.currentScopeVars[id]
+        varId = ctx.VARID().getText()
+        return self.currentScopeVars[varId]
 
 input_stream = FileStream(sys.argv[1])
 

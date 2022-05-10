@@ -16,12 +16,12 @@ paramsListDef
     ;
 
 stmt 
-    : READ VARID                                                   # readStmt
+    : READ VARID                                                # readStmt
     | WRITE expr+                                               # writeStmt
     | REPRO ident                                               # reproStmt
     | IF expr LPAREN stmt* RPAREN (ELSE RPAREN stmt* LPAREN)?   # ifStmt
     | WHILE expr LPAREN stmt* RPAREN                            # whileStmt
-    | PROCID expr*                                                  # procCallStmt
+    | PROCID expr*                                              # procCallStmt
     | leftExpr ASSIGN expr                                      # assignStmt
     ;
 
@@ -33,7 +33,7 @@ expr
     | expr op=(PLUS|MINUS) expr                 # arithmeticExpr
     | expr op=(EQ|NEQ|GT|GE|LT|LE) expr         # relationalExpr
     | (NUMBER | STRING | BOOLEAN)               # valueExpr
-    | (PROCID | VARID)                          # idExpr
+    | (PROCID | VARID | NOTE)                   # idExpr
     | listId                                    # idExpr
     ;
 
@@ -93,8 +93,8 @@ UPPERCASE  : [A-Z] ;
 
 NUMBER  : (DIGIT)+ ;
 BOOLEAN : ('0' | '1') ;
-PROCID      : UPPERCASE (LETTER | DIGIT)* ;
-VARID      : LOWERCASE (LETTER | DIGIT)* ;
+PROCID  : UPPERCASE (LETTER | DIGIT)* ;
+VARID   : LOWERCASE (LETTER | DIGIT)* ;
 
 fragment
 ESC_SEQ : '\\' ('b'|'t'|'n'|'f'|'r'|'"'|'\''|'\\') ;
@@ -107,5 +107,5 @@ WORD    : [a-zA-Z\u0080-\u00FF]+ ;
 WS      : [ \t\n]+ -> skip ;
 
 COMMENT
-    : '~~~' ~( '\r' | '\n' )* -> skip
+    : '~~~' ~( '\r' | '\n' )* '~~~' -> skip
     ;
