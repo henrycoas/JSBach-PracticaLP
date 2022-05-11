@@ -15,13 +15,17 @@ paramsListDef
     : VARID*
     ;
 
+paramsListCall
+    : expr*
+    ;
+
 stmt 
     : READ VARID                                                # readStmt
     | WRITE expr+                                               # writeStmt
-    | REPRO ident                                               # reproStmt
-    | IF expr LPAREN stmt* RPAREN (ELSE RPAREN stmt* LPAREN)?   # ifStmt
+    | REPRO expr                                              # reproStmt
+    | IF expr LPAREN stmt* RPAREN (ELSE LPAREN stmt* RPAREN)?   # ifStmt
     | WHILE expr LPAREN stmt* RPAREN                            # whileStmt
-    | PROCID expr*                                              # procCallStmt
+    | PROCID paramsListCall                                              # procCallStmt
     | leftExpr ASSIGN expr                                      # assignStmt
     ;
 
@@ -33,19 +37,18 @@ expr
     | expr op=(PLUS|MINUS) expr                 # arithmeticExpr
     | expr op=(EQ|NEQ|GT|GE|LT|LE) expr         # relationalExpr
     | (NUMBER | STRING | BOOLEAN)               # valueExpr
-    | (PROCID | VARID | NOTE)                   # idExpr
-    | listId                                    # idExpr
+    | (ident | array)                           # idExpr
     ;
 
 leftExpr 
-    : VARID                        #LeftExprId
+    : VARID
     ;
 
 ident
-    : (PROCID | VARID | NOTE)
+    : (VARID | NOTE)
     ;
 
-listId
+array
     : '{' (VARID* | NOTE*) '}'
     ;
 
@@ -61,12 +64,15 @@ IF      : 'if' ;
 ELSE    : 'else' ;
 WHILE   : 'while' ;
 
+// ---Operacions amb llistes
 CONCAT  : '<<' ;
 CUT     : '8<' ;
+LENGTH  : '#' ;
 
 LPAREN  : '|:' ;
 RPAREN  : ':|' ;
 
+// ---Operadors relacionals
 EQ      : '=' ;
 NEQ     : '/=' ;
 GT      : '>' ;
@@ -74,13 +80,16 @@ LT      : '<' ;
 GE      : '>=' ;
 LE      : '<=' ;
 
+// ---Operadors aritmètics
 PLUS    : '+' ;
 MINUS   : '-' ;
 MUL     : '*' ;
 DIV     : '/' ;
 MOD     : '%' ;
 
-NOTE    : ('A'|'B'|'C'|'D'|'E'|'F'|'G') ;
+fragment
+NUMNOTE : '0'..'8' ;
+NOTE    : ('A'|'B'|'C'|'D'|'E'|'F'|'G') NUMNOTE?;
 
 fragment
 DIGIT   : '0'..'9' ;

@@ -24,6 +24,11 @@ class jsbachVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by jsbachParser#paramsListCall.
+    def visitParamsListCall(self, ctx:jsbachParser.ParamsListCallContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by jsbachParser#readStmt.
     def visitReadStmt(self, ctx:jsbachParser.ReadStmtContext):
         return self.visitChildren(ctx)
@@ -99,8 +104,8 @@ class jsbachVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by jsbachParser#listId.
-    def visitListId(self, ctx:jsbachParser.ListIdContext):
+    # Visit a parse tree produced by jsbachParser#array.
+    def visitArray(self, ctx:jsbachParser.ArrayContext):
         return self.visitChildren(ctx)
 
 

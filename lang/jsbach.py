@@ -78,6 +78,10 @@ class BachVisitor(jsbachVisitor):
         inputValue = input()
         self.currentScopeVars[id] = inputValue
 
+    # Visit a parse tree produced by jsbachParser#reproStmt.
+    def visitReproStmt(self, ctx:jsbachParser.ReproStmtContext):
+        return self.visitChildren(ctx)
+
 
     # Visit a parse tree produced by jsbachParser#ifStmt.
     def visitIfStmt(self, ctx:jsbachParser.IfStmtContext):
@@ -96,14 +100,19 @@ class BachVisitor(jsbachVisitor):
 
     # Visit a parse tree produced by jsbachParser#procCallStmt.
     def visitProcCallStmt(self, ctx:jsbachParser.ProcCallStmtContext):
-        l = list(ctx.getChildren())
-        procName = l[0]
-        # EXC: procedureName does not exist
-        # EXC: #params passed != #params needed
-        for param in l[1:]:
+        procId = ctx.PROCID().getText()
+        procCtx = self.procsContexts[procId]
+        params = self.visit(procCtx.paramsListDef())
+
+        for param in params:
             # self.definedProcedures[]
             # self.currentScopeVars[]
             return
+
+        for stmt in procCtx.stmt():
+            self.visit(stmt)
+        # EXC: procedureName does not exist
+        # EXC: #params passed != #params needed
 
 
     # Visit a parse tree produced by jsbachParser#valueExpr.
@@ -157,8 +166,13 @@ class BachVisitor(jsbachVisitor):
             return self.visit(expr1) % self.visit(expr2)
 
 
-    # Visit a parse tree produced by jsbachParser#idExpr.
-    def visitIdExpr(self, ctx:jsbachParser.IdExprContext):
+    # Visit a parse tree produced by jsbachParser#LeftExprId.
+    def visitLeftExpr(self, ctx:jsbachParser.LeftExprContext):
+        varId = ctx.VARID().getText()
+        return self.currentScopeVars[varId]
+
+    # Visit a parse tree produced by jsbachParser#ident.
+    def visitIdent(self, ctx:jsbachParser.IdentContext):
         if ctx.VARID():
             varId = ctx.VARID().getText()
             return self.currentScopeVars[varId]  
@@ -168,14 +182,6 @@ class BachVisitor(jsbachVisitor):
             self.visit(procCtx.paramsListDef())
             for stmt in procCtx.stmt():
                 self.visit(stmt)
-        elif ctx.listId():
-            self.visit(ctx.listId())
-
-
-    # Visit a parse tree produced by jsbachParser#LeftExprId.
-    def visitLeftExprId(self, ctx:jsbachParser.LeftExprIdContext):
-        varId = ctx.VARID().getText()
-        return self.currentScopeVars[varId]
 
 input_stream = FileStream(sys.argv[1])
 
