@@ -1,7 +1,7 @@
 ~~~ Cartofen kommentar ~~~
 
 Patata |:
-    <!> "This is aux"
+    <!> "Aux function"
 :|
 
 Main |:

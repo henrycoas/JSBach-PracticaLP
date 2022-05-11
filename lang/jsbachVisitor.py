@@ -1,4 +1,4 @@
-# Generated from jsbach.g4 by ANTLR 4.9.2
+# Generated from jsbach.g4 by ANTLR 4.7.1
 from antlr4 import *
 if __name__ is not None and "." in __name__:
     from .jsbachParser import jsbachParser
@@ -94,8 +94,8 @@ class jsbachVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by jsbachParser#LeftExprId.
-    def visitLeftExprId(self, ctx:jsbachParser.LeftExprIdContext):
+    # Visit a parse tree produced by jsbachParser#leftExpr.
+    def visitLeftExpr(self, ctx:jsbachParser.LeftExprContext):
         return self.visitChildren(ctx)
 
 

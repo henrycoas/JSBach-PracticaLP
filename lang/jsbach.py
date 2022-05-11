@@ -15,12 +15,15 @@ else:
 
 class BachVisitor(jsbachVisitor):
 
-    # key: varName, value: variable value
-    currentScopeVars = {}
-    # key: procName, value: list of the params
-    definedProcedures = {}
-    # key: procName, value: ctx
-    procsContexts = {}
+    # llista (stack) de scopes, 
+    # l'última llista és l'actual 
+    allScopes = {}
+    # diccionari de tots els procediments 
+    # amb el seu context stmts
+    procsStmtsContexts = {}
+    # diccionari de tots els procediments
+    # amb el nom de tots els seus paràmetres
+    procsParameters = {}
     # notes added by the REPRO stmt
     musicSheet = []
 
@@ -31,28 +34,22 @@ class BachVisitor(jsbachVisitor):
     # Visit a parse tree produced by jsbachParser#root.
     def visitRoot(self, ctx:jsbachParser.RootContext):
         self.visitChildren(ctx)
+        # Make sure Main is the last thing to visit
+        self.visit(self.procsContexts["Main"])
 
 
     # Visit a parse tree produced by jsbachParser#procedureDef.
     def visitProcedureDef(self, ctx:jsbachParser.ProcedureDefContext):
         procId = ctx.PROCID().getText()
-        params = self.visit(ctx.paramsListDef())
-        # save the procedure name with the parameters
-        self.definedProcedures[procId] = params
-        print(procId)
-        if procId == "Main":
-            for stmt in ctx.stmt():
-                self.visit(stmt)
-        else:
-            self.procsContexts[procId] = ctx
+        print("Procedure " + procId + " stored")
+        self.procsContexts[procId] = ctx.stmt()
+        paramList = self.visit(ctx.paramsListDef())
+        self.procsParameters[procId] = paramList
 
 
     # Visit a parse tree produced by jsbachParser#paramsListDef.
     def visitParamsListDef(self, ctx:jsbachParser.ParamsListDefContext):
         params = list(ctx.getChildren())
-        # save each parameter with value 0
-        for p in params:
-            self.currentScopeVars[p] = 0
         return params
 
 
@@ -66,7 +63,7 @@ class BachVisitor(jsbachVisitor):
     # Visit a parse tree produced by jsbachParser#writeStmt.
     def visitWriteStmt(self, ctx:jsbachParser.WriteStmtContext):
         l = list(ctx.getChildren())
-        # l[0] is WRITE
+        # l[0] is WRITE token
         for out in l[1:]:
             print(self.visit(out), end=" ")
         print()
@@ -102,17 +99,18 @@ class BachVisitor(jsbachVisitor):
     def visitProcCallStmt(self, ctx:jsbachParser.ProcCallStmtContext):
         procId = ctx.PROCID().getText()
         procCtx = self.procsContexts[procId]
-        params = self.visit(procCtx.paramsListDef())
-
-        for param in params:
-            # self.definedProcedures[]
-            # self.currentScopeVars[]
-            return
+        # EXC: procedureName does not exist
+        procParams = self.visit(procCtx.paramsListDef())
+        myParams = self.visit(ctx.paramsListCall)
+        # EXC: #params passed != #params needed
+        # for :
+        #     newScope[procParams[i]] = myParams[i]
+        #     return
 
         for stmt in procCtx.stmt():
             self.visit(stmt)
-        # EXC: procedureName does not exist
-        # EXC: #params passed != #params needed
+
+        # remove new vars
 
 
     # Visit a parse tree produced by jsbachParser#valueExpr.
@@ -171,6 +169,7 @@ class BachVisitor(jsbachVisitor):
         varId = ctx.VARID().getText()
         return self.currentScopeVars[varId]
 
+
     # Visit a parse tree produced by jsbachParser#ident.
     def visitIdent(self, ctx:jsbachParser.IdentContext):
         if ctx.VARID():
@@ -182,6 +181,7 @@ class BachVisitor(jsbachVisitor):
             self.visit(procCtx.paramsListDef())
             for stmt in procCtx.stmt():
                 self.visit(stmt)
+
 
 input_stream = FileStream(sys.argv[1])
 

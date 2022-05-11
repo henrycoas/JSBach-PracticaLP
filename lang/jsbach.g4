@@ -22,10 +22,10 @@ paramsListCall
 stmt 
     : READ VARID                                                # readStmt
     | WRITE expr+                                               # writeStmt
-    | REPRO expr                                              # reproStmt
+    | REPRO expr                                                # reproStmt
     | IF expr LPAREN stmt* RPAREN (ELSE LPAREN stmt* RPAREN)?   # ifStmt
     | WHILE expr LPAREN stmt* RPAREN                            # whileStmt
-    | PROCID paramsListCall                                              # procCallStmt
+    | PROCID paramsListCall                                     # procCallStmt
     | leftExpr ASSIGN expr                                      # assignStmt
     ;
 
