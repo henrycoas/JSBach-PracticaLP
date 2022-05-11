@@ -22,7 +22,7 @@ paramsListCall
 stmt 
     : READ VARID                                                # readStmt
     | WRITE expr+                                               # writeStmt
-    | REPRO expr                                                # reproStmt
+    | PLAY expr                                                # playStmt
     | IF expr LPAREN stmt* RPAREN (ELSE LPAREN stmt* RPAREN)?   # ifStmt
     | WHILE expr LPAREN stmt* RPAREN                            # whileStmt
     | PROCID paramsListCall                                     # procCallStmt
@@ -58,7 +58,7 @@ ASSIGN  : '<-' ;
 
 READ    : '<?>' ;
 WRITE   : '<!>' ;
-REPRO   : '<:>' ;
+PLAY   : '<:>' ;
 
 IF      : 'if' ;
 ELSE    : 'else' ;

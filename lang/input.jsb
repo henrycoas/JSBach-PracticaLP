@@ -1,10 +1,11 @@
 ~~~ Cartofen kommentar ~~~
 
-Patata |:
-    <!> "Aux function"
+Patata a b |:
+    <!> "Aux function" a b
 :|
 
 Main |:
     <!> "Writing is still fine, says Main."
-    Patata
+    <?> c
+    Patata 1 c
 :|
