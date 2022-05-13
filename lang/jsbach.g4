@@ -26,11 +26,13 @@ paramsListCall
 stmt 
     : READ VARID                                                # readStmt
     | WRITE expr+                                               # writeStmt
-    | PLAY expr                                                # playStmt
+    | PLAY expr                                                 # playStmt
     | IF expr LPAREN stmts RPAREN (ELSE LPAREN stmts RPAREN)?   # ifStmt
     | WHILE expr LPAREN stmts RPAREN                            # whileStmt
     | PROCID paramsListCall                                     # procCallStmt
     | leftExpr ASSIGN expr                                      # assignStmt
+    | VARID CONCAT expr                                         # concatStmt
+    | CUT VARID '[' expr ']'                                    # cutStmt
     ;
 
 // per processar cada instrucció
@@ -41,7 +43,10 @@ expr
     | expr op=(PLUS|MINUS) expr                 # arithmeticExpr
     | expr op=(EQ|NEQ|GT|GE|LT|LE) expr         # relationalExpr
     | (NUMBER | STRING | BOOLEAN)               # valueExpr
-    | (ident | array)                           # idExpr
+    | VARID '[' expr ']'                        # arrayAccessExpr
+    | ident                                     # idExpr
+    | array                                     # arrayExpr
+    | LENGTH VARID                              # arrayLengthExpr
     ;
 
 leftExpr 
@@ -53,7 +58,7 @@ ident
     ;
 
 array
-    : '{' (VARID* | NOTE*) '}'
+    : '{' (NUMBER | NOTE)* '}'
     ;
 
 /// Lexer Rules (part lèxica)
@@ -64,6 +69,7 @@ READ    : '<?>' ;
 WRITE   : '<!>' ;
 PLAY   : '<:>' ;
 
+// ---Instruccions condicionals i iteratives
 IF      : 'if' ;
 ELSE    : 'else' ;
 WHILE   : 'while' ;
@@ -96,7 +102,7 @@ NUMNOTE : '0'..'8' ;
 NOTE    : ('A'|'B'|'C'|'D'|'E'|'F'|'G') NUMNOTE?;
 
 fragment
-DIGIT   : '0'..'9' ;
+DIGIT   : [0-9] ;
 fragment
 LETTER  : [a-zA-Z] ;
 fragment
@@ -106,8 +112,8 @@ UPPERCASE  : [A-Z] ;
 
 NUMBER  : (DIGIT)+ ;
 BOOLEAN : ('0' | '1') ;
-PROCID  : UPPERCASE (LETTER | DIGIT)* ;
-VARID   : LOWERCASE (LETTER | DIGIT)* ;
+PROCID  : UPPERCASE (LETTER | DIGIT | '-' | '_')* ;
+VARID   : LOWERCASE (LETTER | DIGIT | '-' | '_')* ;
 
 fragment
 ESC_SEQ : '\\' ('b'|'t'|'n'|'f'|'r'|'"'|'\''|'\\') ;

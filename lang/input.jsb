@@ -1,11 +1,13 @@
 Main |:
-    Hanoi 3 1 2 3
+    Alle_Schlussel
 :|
 
-Hanoi n ori dst aux |:
-    if n > 0 |:
-        Hanoi (n - 1) ori aux dst
-        <!> ori "->" dst
-        Hanoi (n - 1) aux dst ori
-    :|
+Alle_Schlussel |:
+    src <- {C D E F G}
+    <!> src[1]
+    <!> #src
+    src << A0
+    <!> src
+    8< src[1]
+    <!> src
 :|

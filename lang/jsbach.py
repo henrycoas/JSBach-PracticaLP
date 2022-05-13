@@ -82,7 +82,9 @@ class BachVisitor(jsbachVisitor):
 
     # Visit a parse tree produced by jsbachParser#playStmt.
     def visitPlayStmt(self, ctx:jsbachParser.PlayStmtContext):
-        return self.visitChildren(ctx)
+        note = self.visit(ctx.expr())
+        print(note)
+        self.musicSheet.append(note)
 
 
     # Visit a parse tree produced by jsbachParser#ifStmt.
@@ -129,6 +131,24 @@ class BachVisitor(jsbachVisitor):
         # "pop" new vars
         self.allScopes.pop()
 
+    # Visit a parse tree produced by jsbachParser#concatStmt.
+    def visitConcatStmt(self, ctx:jsbachParser.ConcatStmtContext):
+        varId = ctx.VARID().getText()
+        newElem = self.visit(ctx.expr())
+        self.allScopes[-1][varId].append(newElem)
+
+
+    # Visit a parse tree produced by jsbachParser#cutStmt.
+    def visitCutStmt(self, ctx:jsbachParser.CutStmtContext):
+        varId = ctx.VARID().getText()
+        index = self.visit(ctx.expr())-1
+        del self.allScopes[-1][varId][index]
+
+    # Visit a parse tree produced by jsbachParser#arrayLengthExpr.
+    def visitArrayLengthExpr(self, ctx:jsbachParser.ArrayLengthExprContext):
+        varId = ctx.VARID().getText()
+        return len(self.allScopes[-1][varId])
+
     # Visit a parse tree produced by jsbachParser#valueExpr.
     def visitValueExpr(self, ctx:jsbachParser.ValueExprContext):
         # len(l) == 1
@@ -155,13 +175,22 @@ class BachVisitor(jsbachVisitor):
             retValue = self.visit(expr1) <= self.visit(expr2)
         elif ctx.LE():
             retValue = self.visit(expr1) < self.visit(expr2)
-        
         return 1 if retValue else 0
 
 
     # Visit a parse tree produced by jsbachParser#parenthesesExpr.
     def visitParenthesesExpr(self, ctx:jsbachParser.ParenthesesExprContext):
         return self.visit(ctx.expr())
+
+    # Visit a parse tree produced by jsbachParser#arrayAccessExpr.
+    def visitArrayAccessExpr(self, ctx:jsbachParser.ArrayAccessExprContext):
+        varId = ctx.VARID().getText()
+        index = self.visit(ctx.expr())-1
+        return self.allScopes[-1][varId][index]
+
+    # Visit a parse tree produced by jsbachParser#arrayExpr.
+    def visitArrayExpr(self, ctx:jsbachParser.ArrayExprContext):
+        return self.visit(ctx.array())
 
 
     # Visit a parse tree produced by jsbachParser#arithmeticExpr.
@@ -176,11 +205,11 @@ class BachVisitor(jsbachVisitor):
         elif ctx.MUL():
             return self.visit(expr1) * self.visit(expr2)
         elif ctx.DIV():
-            valueExpr2 = self.visit(expr2)
-            if valueExpr2 == 0:
-                # EXC: Division durch Null (divisió entre 0, pels que no saben alemà)
-                return 0
-            return self.visit(expr1) / valueExpr2
+            try:
+                return self.visit(expr1) / self.visit(expr2)
+            except ZeroDivisionError as zero:
+                print("Division durch Null (divisió entre 0, pels que no saben alemà)")
+                return None
         elif ctx.MOD():
             return self.visit(expr1) % self.visit(expr2)
 
@@ -188,7 +217,28 @@ class BachVisitor(jsbachVisitor):
     # Visit a parse tree produced by jsbachParser#LeftExprId.
     def visitLeftExpr(self, ctx:jsbachParser.LeftExprContext):
         varId = ctx.VARID().getText()
-        return self.allScopes[-1][varId]
+        return varId
+
+
+    def __noteValueSpanishNotation(self, noteId):
+        return 0
+
+
+    def __noteValueEnglishNotation(self, noteId):
+        letter = noteId[0]
+        if len(noteId) > 1:
+            number = int(noteId[1])
+        else:
+            number = 4
+
+        # ord(A) = ascii code for letter A = 65
+        baseValueFromLetter = ord(letter) - 65
+        octave = 7
+
+        if letter not in ['A', 'B']:
+            number = number - 1
+
+        return baseValueFromLetter + octave * number
 
 
     # Visit a parse tree produced by jsbachParser#ident.
@@ -196,7 +246,21 @@ class BachVisitor(jsbachVisitor):
         if ctx.VARID():
             varId = ctx.VARID().getText()
             return self.allScopes[-1][varId]
+        elif ctx.NOTE():
+            noteId = ctx.NOTE().getText()
+            return self.__noteValueEnglishNotation(noteId)
 
+    # Visit a parse tree produced by jsbachParser#array.
+    def visitArray(self, ctx:jsbachParser.ArrayContext):
+        elems = []
+        if ctx.NUMBER():
+            for num in ctx.NUMBER():
+                elems.append(int(num.getText()))
+        elif ctx.NOTE():
+            for note in ctx.NOTE():
+                elems.append(self.__noteValueEnglishNotation(note.getText()))
+        return elems
+        
 
 input_stream = FileStream(sys.argv[1])
 

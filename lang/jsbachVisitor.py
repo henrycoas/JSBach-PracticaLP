@@ -69,6 +69,21 @@ class jsbachVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by jsbachParser#concatStmt.
+    def visitConcatStmt(self, ctx:jsbachParser.ConcatStmtContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by jsbachParser#cutStmt.
+    def visitCutStmt(self, ctx:jsbachParser.CutStmtContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by jsbachParser#arrayLengthExpr.
+    def visitArrayLengthExpr(self, ctx:jsbachParser.ArrayLengthExprContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by jsbachParser#unaryExpr.
     def visitUnaryExpr(self, ctx:jsbachParser.UnaryExprContext):
         return self.visitChildren(ctx)
@@ -76,6 +91,16 @@ class jsbachVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by jsbachParser#valueExpr.
     def visitValueExpr(self, ctx:jsbachParser.ValueExprContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by jsbachParser#arrayAccessExpr.
+    def visitArrayAccessExpr(self, ctx:jsbachParser.ArrayAccessExprContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by jsbachParser#arrayExpr.
+    def visitArrayExpr(self, ctx:jsbachParser.ArrayExprContext):
         return self.visitChildren(ctx)
 
 
