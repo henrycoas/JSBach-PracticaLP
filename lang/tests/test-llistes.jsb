@@ -1,9 +1,8 @@
 Main |:
-    <!> "Main"
-    Alle_Schlussel
+    Listillos
 :|
 
-Alle_Schlussel |:
+Listillos |:
     src <- {C D E F G}
     <!> src[1]
     <!> #src

@@ -34,10 +34,25 @@ class BachVisitor(jsbachVisitor):
     # Visit a parse tree produced by jsbachParser#root.
     def visitRoot(self, ctx:jsbachParser.RootContext):
         self.visitChildren(ctx)
+        
         # Making sure Main is the last thing to visit
-        self.allScopes.append({})
-        for stmt in self.procsStmtsContexts['Main']:
-            self.visit(stmt)
+        if len(sys.argv) == 2:
+            self.allScopes.append({})
+            for stmt in self.procsStmtsContexts['Main']:
+                self.visit(stmt)
+        else:
+            paramsInput = sys.argv[3:]
+            # EXC: #params passed != #params needed
+            newScope = {}
+            for i in range(len(paramsInput)):
+                newScope[self.procsParameters[i]] = paramsInput[i]
+            self.allScopes.append(newScope)
+
+            procName = sys.argv[2]
+            for stmt in self.procsStmtsContexts[procName]:
+                self.visit(stmt)
+
+        print(self.musicSheet)
 
 
     # Visit a parse tree produced by jsbachParser#procedureDef.
@@ -83,8 +98,10 @@ class BachVisitor(jsbachVisitor):
     # Visit a parse tree produced by jsbachParser#playStmt.
     def visitPlayStmt(self, ctx:jsbachParser.PlayStmtContext):
         note = self.visit(ctx.expr())
-        print(note)
-        self.musicSheet.append(note)
+        if isinstance(note, list):
+            self.musicSheet.extend(note)
+        else:
+            self.musicSheet.append(note)
 
 
     # Visit a parse tree produced by jsbachParser#ifStmt.
@@ -148,6 +165,16 @@ class BachVisitor(jsbachVisitor):
     def visitArrayLengthExpr(self, ctx:jsbachParser.ArrayLengthExprContext):
         varId = ctx.VARID().getText()
         return len(self.allScopes[-1][varId])
+
+
+    # Visit a parse tree produced by jsbachParser#unaryExpr.
+    def visitUnaryExpr(self, ctx:jsbachParser.UnaryExprContext):
+        expr = self.visit(ctx.expr())
+        if ctx.PLUS():
+            return expr
+        elif ctx.MINUS():
+            return -expr
+
 
     # Visit a parse tree produced by jsbachParser#valueExpr.
     def visitValueExpr(self, ctx:jsbachParser.ValueExprContext):
