@@ -8,7 +8,11 @@ root
     : procedureDef+ EOF ;
 
 procedureDef
-    : PROCID paramsListDef LPAREN stmt* RPAREN
+    : PROCID paramsListDef LPAREN stmts RPAREN
+    ;
+
+stmts
+    : stmt*
     ;
 
 paramsListDef
@@ -23,8 +27,8 @@ stmt
     : READ VARID                                                # readStmt
     | WRITE expr+                                               # writeStmt
     | PLAY expr                                                # playStmt
-    | IF expr LPAREN stmt* RPAREN (ELSE LPAREN stmt* RPAREN)?   # ifStmt
-    | WHILE expr LPAREN stmt* RPAREN                            # whileStmt
+    | IF expr LPAREN stmts RPAREN (ELSE LPAREN stmts RPAREN)?   # ifStmt
+    | WHILE expr LPAREN stmts RPAREN                            # whileStmt
     | PROCID paramsListCall                                     # procCallStmt
     | leftExpr ASSIGN expr                                      # assignStmt
     ;

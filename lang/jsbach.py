@@ -20,7 +20,7 @@ class BachVisitor(jsbachVisitor):
     allScopes = []
     # diccionari de tots els procediments 
     # amb el seu context stmts
-    procsContexts = {}
+    procsStmtsContexts = {}
     # diccionari de tots els procediments
     # amb el nom de tots els seus paràmetres
     procsParameters = {}
@@ -36,17 +36,16 @@ class BachVisitor(jsbachVisitor):
         self.visitChildren(ctx)
         # Making sure Main is the last thing to visit
         self.allScopes.append({})
-        for stmt in self.procsContexts['Main']:
+        for stmt in self.procsStmtsContexts['Main']:
             self.visit(stmt)
 
 
     # Visit a parse tree produced by jsbachParser#procedureDef.
     def visitProcedureDef(self, ctx:jsbachParser.ProcedureDefContext):
         procId = ctx.PROCID().getText()
-        print("Procedure " + procId + " stored")
         paramList = self.visit(ctx.paramsListDef())
 
-        self.procsContexts[procId] = ctx.stmt()
+        self.procsStmtsContexts[procId] = ctx.stmts().stmt()
         self.procsParameters[procId] = paramList
 
 
@@ -55,7 +54,6 @@ class BachVisitor(jsbachVisitor):
         params = []
         for p in ctx.VARID():
             params.append(p.getText())
-        print(params)
         return params
 
 
@@ -78,7 +76,7 @@ class BachVisitor(jsbachVisitor):
     # Visit a parse tree produced by jsbachParser#readStmt.
     def visitReadStmt(self, ctx:jsbachParser.ReadStmtContext):
         id = ctx.VARID().getText()
-        inputValue = input()
+        inputValue = int(input())
         self.allScopes[-1][id] = inputValue
 
 
@@ -91,18 +89,18 @@ class BachVisitor(jsbachVisitor):
     def visitIfStmt(self, ctx:jsbachParser.IfStmtContext):
         boolExpr = self.visit(ctx.expr())
         if boolExpr == 1:
-            self.visit(ctx.stmt(0))
+            self.visit(ctx.stmts(0))
         else:
             if ctx.ELSE():
-                self.visit(ctx.stmt(1))
+                self.visit(ctx.stmts(1))
 
 
     # Visit a parse tree produced by jsbachParser#whileStmt.
     def visitWhileStmt(self, ctx:jsbachParser.WhileStmtContext):
         while self.visit(ctx.expr()):
-            self.visit(ctx.stmt())
+            self.visit(ctx.stmts())
 
-        # Visit a parse tree produced by jsbachParser#paramsListCall.
+    # Visit a parse tree produced by jsbachParser#paramsListCall.
     def visitParamsListCall(self, ctx:jsbachParser.ParamsListCallContext):
         paramsCtx = list(ctx.getChildren())
         params = []
@@ -114,7 +112,7 @@ class BachVisitor(jsbachVisitor):
     # Visit a parse tree produced by jsbachParser#procCallStmt.
     def visitProcCallStmt(self, ctx:jsbachParser.ProcCallStmtContext):
         procId = ctx.PROCID().getText()
-        procStmtsCtx = self.procsContexts[procId]
+        procStmtsCtx = self.procsStmtsContexts[procId]
         # EXC: procedureName does not exist
         procParams = self.procsParameters[procId]
         myParams = self.visit(ctx.paramsListCall())
@@ -122,7 +120,6 @@ class BachVisitor(jsbachVisitor):
         newScope = {}
         for i in range(len(myParams)):
             newScope[procParams[i]] = myParams[i]
-
         # "push" new vars
         self.allScopes.append(newScope)
 
@@ -160,6 +157,11 @@ class BachVisitor(jsbachVisitor):
             retValue = self.visit(expr1) < self.visit(expr2)
         
         return 1 if retValue else 0
+
+
+    # Visit a parse tree produced by jsbachParser#parenthesesExpr.
+    def visitParenthesesExpr(self, ctx:jsbachParser.ParenthesesExprContext):
+        return self.visit(ctx.expr())
 
 
     # Visit a parse tree produced by jsbachParser#arithmeticExpr.

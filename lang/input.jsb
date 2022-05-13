@@ -1,11 +1,11 @@
-~~~ Cartofen kommentar ~~~
-
-Patata a b |:
-    <!> "Aux function" a b
+Main |:
+    Hanoi 3 1 2 3
 :|
 
-Main |:
-    <!> "Writing is still fine, says Main."
-    <?> c
-    Patata 1 c
+Hanoi n ori dst aux |:
+    if n > 0 |:
+        Hanoi (n - 1) ori aux dst
+        <!> ori "->" dst
+        Hanoi (n - 1) aux dst ori
+    :|
 :|

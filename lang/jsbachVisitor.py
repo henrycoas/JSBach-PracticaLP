@@ -19,6 +19,11 @@ class jsbachVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by jsbachParser#stmts.
+    def visitStmts(self, ctx:jsbachParser.StmtsContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by jsbachParser#paramsListDef.
     def visitParamsListDef(self, ctx:jsbachParser.ParamsListDefContext):
         return self.visitChildren(ctx)

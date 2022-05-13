@@ -18,5 +18,5 @@ antlr4 -Dlanguage=Python3 -no-listener -visitor jsbach.g4
 
 ## Ús
 ```python
-python3 jsbach.py input.txt
+python3 jsbach.py input.jsb
 ```
