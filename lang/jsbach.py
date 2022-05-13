@@ -38,18 +38,29 @@ class BachVisitor(jsbachVisitor):
         # Making sure Main is the last thing to visit
         if len(sys.argv) == 2:
             self.allScopes.append({})
-            for stmt in self.procsStmtsContexts['Main']:
-                self.visit(stmt)
+            try:
+                for stmt in self.procsStmtsContexts['Main']:
+                    self.visit(stmt)
+            except KeyError:
+                raise Exception('On està el Main, que jo el vegui?')
         else:
+            procId = sys.argv[2]
             paramsInput = sys.argv[3:]
-            # EXC: #params passed != #params needed
-            newScope = {}
-            for i in range(len(paramsInput)):
-                newScope[self.procsParameters[i]] = paramsInput[i]
+
+            try:
+                # EXC: #params passed != #params needed
+                if len(self.procsParameters[procId]) != len(paramsInput):
+                    raise Exception('La crida a ' + procId + ' requereix ' + str(len(self.procsParameters[procId])) + ' paràmetre, no ' + str(len(paramsInput)) + '.')
+
+                newScope = {}
+                for i in range(len(paramsInput)):
+                    newScope[self.procsParameters[procId][i]] = paramsInput[i]
+            except KeyError:
+                raise Exception('El procediment ' + procId + ' no existeix.')
+
             self.allScopes.append(newScope)
 
-            procName = sys.argv[2]
-            for stmt in self.procsStmtsContexts[procName]:
+            for stmt in self.procsStmtsContexts[procId]:
                 self.visit(stmt)
 
         print(self.musicSheet)
@@ -60,6 +71,9 @@ class BachVisitor(jsbachVisitor):
         procId = ctx.PROCID().getText()
         paramList = self.visit(ctx.paramsListDef())
 
+        if procId in self.procsStmtsContexts:
+            raise Exception('El procediment ' + procId + ' ja està definit.')
+
         self.procsStmtsContexts[procId] = ctx.stmts().stmt()
         self.procsParameters[procId] = paramList
 
@@ -68,7 +82,10 @@ class BachVisitor(jsbachVisitor):
     def visitParamsListDef(self, ctx:jsbachParser.ParamsListDefContext):
         params = []
         for p in ctx.VARID():
-            params.append(p.getText())
+            pTxt = p.getText()
+            if pTxt in params:
+                raise Exception('Paràmetres formals repetits amb el nom ' + pTxt + '.')
+            params.append(pTxt)
         return params
 
 
@@ -136,6 +153,9 @@ class BachVisitor(jsbachVisitor):
         procParams = self.procsParameters[procId]
         myParams = self.visit(ctx.paramsListCall())
         # EXC: #params passed != #params needed
+        if len(procParams) != len(myParams):
+            raise Exception('La crida a ' + procId + ' requereix ' + len(procParams) + ', no ' + len(myParams) + '.')
+
         newScope = {}
         for i in range(len(myParams)):
             newScope[procParams[i]] = myParams[i]
@@ -152,19 +172,30 @@ class BachVisitor(jsbachVisitor):
     def visitConcatStmt(self, ctx:jsbachParser.ConcatStmtContext):
         varId = ctx.VARID().getText()
         newElem = self.visit(ctx.expr())
-        self.allScopes[-1][varId].append(newElem)
+        try:
+            self.allScopes[-1][varId].append(newElem)
+        except KeyError:
+            raise Exception('La llista ' + varId + ' no existeix.')
 
 
     # Visit a parse tree produced by jsbachParser#cutStmt.
     def visitCutStmt(self, ctx:jsbachParser.CutStmtContext):
         varId = ctx.VARID().getText()
-        index = self.visit(ctx.expr())-1
-        del self.allScopes[-1][varId][index]
+        index = self.visit(ctx.expr())
+        try:
+            del self.allScopes[-1][varId][index-1]
+        except KeyError:
+            raise Exception('La llista ' + varId + ' no existeix.')
+        except IndexError:
+            raise Exception('Accés a índex inexistent ' + str(index) + ' de la llista ' + varId + ', de tamany ' + str(len(self.allScopes[-1][varId])) + '.')
 
     # Visit a parse tree produced by jsbachParser#arrayLengthExpr.
     def visitArrayLengthExpr(self, ctx:jsbachParser.ArrayLengthExprContext):
         varId = ctx.VARID().getText()
-        return len(self.allScopes[-1][varId])
+        try:
+            return len(self.allScopes[-1][varId])
+        except KeyError:
+            raise Exception('La llista ' + varId + ' no existeix.')
 
 
     # Visit a parse tree produced by jsbachParser#unaryExpr.
@@ -212,8 +243,15 @@ class BachVisitor(jsbachVisitor):
     # Visit a parse tree produced by jsbachParser#arrayAccessExpr.
     def visitArrayAccessExpr(self, ctx:jsbachParser.ArrayAccessExprContext):
         varId = ctx.VARID().getText()
-        index = self.visit(ctx.expr())-1
-        return self.allScopes[-1][varId][index]
+        index = self.visit(ctx.expr())
+        try:
+            return self.allScopes[-1][varId][index-1]
+        except KeyError:
+            raise Exception('La llista ' + varId + ' no existeix.')
+        except IndexError:
+            raise Exception('Accés a índex inexistent ' + str(index) + ' de la llista ' + varId + ', de tamany ' + str(len(self.allScopes[-1][varId])) + '.')
+
+        
 
     # Visit a parse tree produced by jsbachParser#arrayExpr.
     def visitArrayExpr(self, ctx:jsbachParser.ArrayExprContext):
@@ -234,9 +272,8 @@ class BachVisitor(jsbachVisitor):
         elif ctx.DIV():
             try:
                 return self.visit(expr1) / self.visit(expr2)
-            except ZeroDivisionError as zero:
-                print("Division durch Null (divisió entre 0, pels que no saben alemà)")
-                return None
+            except ZeroDivisionError:
+                raise Exception("Division durch Null (divisió entre 0, pels que no saben alemà)")
         elif ctx.MOD():
             return self.visit(expr1) % self.visit(expr2)
 
@@ -265,14 +302,20 @@ class BachVisitor(jsbachVisitor):
         if letter not in ['A', 'B']:
             number = number - 1
 
-        return baseValueFromLetter + octave * number
+        value = baseValueFromLetter + octave * number
+        if value > 51:
+            raise Exception('La nota ' + noteId + ' no existeix.')
+        return value
 
 
     # Visit a parse tree produced by jsbachParser#ident.
     def visitIdent(self, ctx:jsbachParser.IdentContext):
         if ctx.VARID():
             varId = ctx.VARID().getText()
-            return self.allScopes[-1][varId]
+            try:
+                return self.allScopes[-1][varId]
+            except KeyError:
+                raise Exception('La variable ' + varId + ' no existeix.')
         elif ctx.NOTE():
             noteId = ctx.NOTE().getText()
             return self.__noteValueEnglishNotation(noteId)
