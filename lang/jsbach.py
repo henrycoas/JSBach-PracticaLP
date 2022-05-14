@@ -63,7 +63,7 @@ class BachVisitor(jsbachVisitor):
             for stmt in self.procsStmtsContexts[procId]:
                 self.visit(stmt)
 
-        print(self.musicSheet)
+        print('Partitura generada:', self.musicSheet)
 
 
     # Visit a parse tree produced by jsbachParser#procedureDef.
@@ -303,7 +303,7 @@ class BachVisitor(jsbachVisitor):
             number = number - 1
 
         value = baseValueFromLetter + octave * number
-        if value > 51:
+        if value > 51 or value < 0:
             raise Exception('La nota ' + noteId + ' no existeix.')
         return value
 

@@ -1,16 +1,11 @@
 Main |:
-    <!> "Main"
-    Alle_Schlussel
+    <!> "Executing..."
+    List
 :|
 
-Alle_Schlussel |:
-    src <- {C D E F G}
-    <!> src[1]
-    <!> #src
-    src << A0
-    <!> src
-    8< src[1]
-    <!> src
+List |:
+    src <- {A0 B0 C1 D1 E1 F1}
+    src << G1
     <:> src
-    <:> F
+    <!> src
 :|
