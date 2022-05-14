@@ -64,6 +64,22 @@ class BachVisitor(jsbachVisitor):
                 self.visit(stmt)
 
         print('Partitura generada:', self.musicSheet)
+        self.__createMusicSheet()
+
+    def __num2note(self, noteNum):
+        baseValue = noteNum % 7
+        offsetNum = int((noteNum-baseValue)/7)
+        if baseValue != 0 and baseValue != 1:
+            offsetNum = offsetNum+1
+        baseLetter = chr(baseValue + 97) 
+        return baseLetter + str(offsetNum)
+
+    def __createMusicSheet(self):
+        file = open("demo.ly", "w")
+        file.write('\\version "2.20.0" \n\\language "english" \n\\score { \n\t\\absolute { \n\t\t\\tempo 4 = 120 \n\t\t')
+        for note in self.musicSheet:
+            file.write(self.__num2note(note) + ' ')
+        file.write('\n\t} \n\t\\layout { } \n\t\\midi { } \n}')
 
 
     # Visit a parse tree produced by jsbachParser#procedureDef.
