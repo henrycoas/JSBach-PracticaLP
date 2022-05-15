@@ -67,16 +67,29 @@ class BachVisitor(jsbachVisitor):
         self.__createMusicSheet()
 
     def __num2note(self, noteNum):
+        # letter
         baseValue = noteNum % 7
+        baseLetter = chr(baseValue + 97)
+
+        # number
         offsetNum = int((noteNum-baseValue)/7)
-        if baseValue != 0 and baseValue != 1:
+        if baseLetter != 'a' and baseLetter != 'b':
             offsetNum = offsetNum+1
-        baseLetter = chr(baseValue + 97) 
-        return baseLetter + str(offsetNum)
+
+        # lilypond notation postfix
+        lilyPostfixOffset = 4 - offsetNum - 1
+            
+        if lilyPostfixOffset >= 0:
+            lilyPostfix = ',' * lilyPostfixOffset
+        else:
+            lilyPostfix = '\'' * -lilyPostfixOffset
+
+
+        return baseLetter + lilyPostfix
 
     def __createMusicSheet(self):
-        file = open("demo.ly", "w")
-        file.write('\\version "2.20.0" \n\\language "english" \n\\score { \n\t\\absolute { \n\t\t\\tempo 4 = 120 \n\t\t')
+        file = open("hanoi.ly", "w")
+        file.write('\\version "2.20.0" \n\\score { \n\t\\absolute { \n\t\t\\tempo 4 = 120 \n\t\t')
         for note in self.musicSheet:
             file.write(self.__num2note(note) + ' ')
         file.write('\n\t} \n\t\\layout { } \n\t\\midi { } \n}')

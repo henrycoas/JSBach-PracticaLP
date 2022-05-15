@@ -26,3 +26,11 @@ python3 jsbach.py input.jsb
 ```
 
 ```
+
+## Desenvolupament del doble intèrpret
+
+### De notes a enters...
+
+### d'enters a notes...
+
+### de notes angleses a notes Lilypond
