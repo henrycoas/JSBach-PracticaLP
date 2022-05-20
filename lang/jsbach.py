@@ -1,5 +1,6 @@
 import sys
 import pdb
+import os
 from antlr4 import *
 
 if __name__ is not None and "." in __name__:
@@ -63,7 +64,6 @@ class BachVisitor(jsbachVisitor):
             for stmt in self.procsStmtsContexts[procId]:
                 self.visit(stmt)
 
-        print('Partitura generada:', self.musicSheet)
         self.__createMusicSheet()
 
     def __num2note(self, noteNum):
@@ -84,11 +84,10 @@ class BachVisitor(jsbachVisitor):
         else:
             lilyPostfix = '\'' * -lilyPostfixOffset
 
-
         return baseLetter + lilyPostfix
 
     def __createMusicSheet(self):
-        file = open("hanoi.ly", "w")
+        file = open("musica.ly", "w")
         file.write('\\version "2.20.0" \n\\score { \n\t\\absolute { \n\t\t\\tempo 4 = 120 \n\t\t')
         for note in self.musicSheet:
             file.write(self.__num2note(note) + ' ')
@@ -360,15 +359,67 @@ class BachVisitor(jsbachVisitor):
                 elems.append(self.__noteValueEnglishNotation(note.getText()))
         return elems
         
+def __generateMusic():
+    # Lilypond
+    if os.system('lilypond musica.ly') == 0:
+        print('--Lilypond: OK')
+    else:
+        print("--Lilypond: NO")
+        return 1
 
-input_stream = FileStream(sys.argv[1])
+    # Timidity++
+    if os.system('timidity -Ow -o musica.wav musica.midi') == 0:
+        print('--Timidity: OK')
+    else:
+        print('--Timidity: NO')
+        return 2
 
-lexer = jsbachLexer(input_stream)
-token_stream = CommonTokenStream(lexer)
+    # ffmpeg
+    if os.system('ffmpeg -y -i musica.wav -codec:a libmp3lame -qscale:a 2 musica.mp3') == 0:
+        print('--ffmpeg: OK')
+    else:
+        print('--ffmpeg: NO')
+        return 3
 
-parser = jsbachParser(token_stream)
-tree = parser.root()
-print(tree.toStringTree(recog=parser))
+    # Operative system check + play
+    myOS = sys.platform
+    print("--D'acord, el teu sistema utilitza l'OS:", myOS)
+    print("--Reproduint l'obra mestra creada")
 
-visitor = BachVisitor()
-visitor.visit(tree)
+    if myOS == "linux":
+        if os.system('ffplay -autoexit -showmode 1 musica.mp3') == 0:
+            print('--ffplay: OK')
+        else:
+            print('--ffplay: NO')
+            return 4
+    elif myOS == "darwin":
+        if os.system('afplay musica.mp3') == 0:
+            print('--afplay: OK')
+        else:
+            print('--afplay: NO')
+            return 4
+    else:
+        return 5
+
+if __name__== "__main__":
+    if os.system('antlr4 -Dlanguage=Python3 -no-listener -visitor jsbach.g4') == 0:
+        print('--Compilació de la gramàtica i generació de la plantilla del visitor: OK')
+    else:
+        print('--Compilació de la gramàtica i generació de la plantilla del visitor: NO')
+
+    input_stream = FileStream(sys.argv[1])
+
+    lexer = jsbachLexer(input_stream)
+    token_stream = CommonTokenStream(lexer)
+
+    parser = jsbachParser(token_stream)
+    tree = parser.root()
+    print(tree.toStringTree(recog=parser))
+
+    visitor = BachVisitor()
+    visitor.visit(tree)
+    
+    if __generateMusic():
+        print('--Execució acabada amb errors.')
+    else:
+        print('--Execució acabada amb èxit.')
