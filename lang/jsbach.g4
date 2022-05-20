@@ -97,6 +97,7 @@ MUL     : '*' ;
 DIV     : '/' ;
 MOD     : '%' ;
 
+// ---Altres construccions
 fragment
 NUMNOTE : '0'..'8' ;
 NOTE    : ('A'|'B'|'C'|'D'|'E'|'F'|'G') NUMNOTE?;

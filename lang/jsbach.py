@@ -145,6 +145,7 @@ class BachVisitor(jsbachVisitor):
         note = self.visit(ctx.expr())
         if isinstance(note, list):
             self.musicSheet.extend(note)
+            # si aquí hi hagués una llista, podria ser un acord de Lilypond
         else:
             self.musicSheet.append(note)
 
@@ -362,50 +363,50 @@ class BachVisitor(jsbachVisitor):
 def __generateMusic():
     # Lilypond
     if os.system('lilypond musica.ly') == 0:
-        print('--Lilypond: OK')
+        print('---Lilypond: OK')
     else:
-        print("--Lilypond: NO")
+        print("---Lilypond: NO")
         return 1
 
     # Timidity++
     if os.system('timidity -Ow -o musica.wav musica.midi') == 0:
-        print('--Timidity: OK')
+        print('---Timidity: OK')
     else:
-        print('--Timidity: NO')
+        print('---Timidity: NO')
         return 2
 
     # ffmpeg
     if os.system('ffmpeg -y -i musica.wav -codec:a libmp3lame -qscale:a 2 musica.mp3') == 0:
-        print('--ffmpeg: OK')
+        print('---ffmpeg: OK')
     else:
-        print('--ffmpeg: NO')
+        print('---ffmpeg: NO')
         return 3
 
     # Operative system check + play
     myOS = sys.platform
-    print("--D'acord, el teu sistema utilitza l'OS:", myOS)
-    print("--Reproduint l'obra mestra creada")
+    print("---D'acord, el teu sistema utilitza l'OS:", myOS)
+    print("---Reproduint l'obra mestra creada")
 
     if myOS == "linux":
         if os.system('ffplay -autoexit -showmode 1 musica.mp3') == 0:
-            print('--ffplay: OK')
+            print('---ffplay: OK')
         else:
-            print('--ffplay: NO')
+            print('---ffplay: NO')
             return 4
     elif myOS == "darwin":
         if os.system('afplay musica.mp3') == 0:
-            print('--afplay: OK')
+            print('---afplay: OK')
         else:
-            print('--afplay: NO')
+            print('---afplay: NO')
             return 4
     else:
         return 5
 
 if __name__== "__main__":
     if os.system('antlr4 -Dlanguage=Python3 -no-listener -visitor jsbach.g4') == 0:
-        print('--Compilació de la gramàtica i generació de la plantilla del visitor: OK')
+        print('---Compilació de la gramàtica i generació de la plantilla del visitor: OK')
     else:
-        print('--Compilació de la gramàtica i generació de la plantilla del visitor: NO')
+        print('---Compilació de la gramàtica i generació de la plantilla del visitor: NO')
 
     input_stream = FileStream(sys.argv[1])
 
@@ -420,6 +421,6 @@ if __name__== "__main__":
     visitor.visit(tree)
     
     if __generateMusic():
-        print('--Execució acabada amb errors.')
+        print('---Execució interrompuda o acabada amb errors.')
     else:
-        print('--Execució acabada amb èxit.')
+        print('---Execució acabada amb èxit.')
