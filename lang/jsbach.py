@@ -385,7 +385,7 @@ def __generateMusic():
     # Operative system check + play
     myOS = sys.platform
     print("---D'acord, el teu sistema utilitza l'OS:", myOS)
-    print("---Reproduint l'obra mestra creada")
+    print("---Reproduint l'obra mestra creada.")
 
     if myOS == "linux":
         if os.system('ffplay -autoexit -showmode 1 musica.mp3') == 0:
