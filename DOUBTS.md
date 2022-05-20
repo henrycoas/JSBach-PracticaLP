@@ -1,1 +1,0 @@
-- Les llistes de notes. S'han d'imprimir com a notes en format string, no? O com els nombres que les representen? 
