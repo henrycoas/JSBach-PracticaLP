@@ -209,3 +209,6 @@ def __num2note(self, noteNum):
 # Generació dels fitxers d'àudio
 
 Utilitzant Lilipond per generar les partitures i Timidity++ i ffmpeg per generar els WAV i MP3. Aquest procés es realitza dins de la funció `__generateMusic()`.
+
+# Extensions
+## Escollir el tipus de la nota

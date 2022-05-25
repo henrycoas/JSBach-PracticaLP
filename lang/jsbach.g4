@@ -26,6 +26,8 @@ paramsListCall
 stmt 
     : READ VARID                                                # readStmt
     | WRITE expr+                                               # writeStmt
+    | CRABIFY expr                                              # crabifyStmt
+    | CANONPLAY expr                                            # canonPlayStmt
     | PLAY expr                                                 # playStmt
     | IF expr LPAREN stmts RPAREN (ELSE LPAREN stmts RPAREN)?   # ifStmt
     | WHILE expr LPAREN stmts RPAREN                            # whileStmt
@@ -67,7 +69,9 @@ ASSIGN  : '<-' ;
 
 READ    : '<?>' ;
 WRITE   : '<!>' ;
-PLAY   : '<:>' ;
+PLAY    : '<:>' ;
+CANONPLAY : '<:' DIGIT '>' ;
+CRABIFY : '<º,,º>' ;
 
 // ---Instruccions condicionals i iteratives
 IF      : 'if' ;
