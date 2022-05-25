@@ -211,4 +211,43 @@ def __num2note(self, noteNum):
 Utilitzant Lilipond per generar les partitures i Timidity++ i ffmpeg per generar els WAV i MP3. Aquest procés es realitza dins de la funció `__generateMusic()`.
 
 # Extensions
-## Escollir el tipus de la nota
+## Instrucció de reproducció en cànon
+La instrucció de reproducció `<:>` afegeix la nota o la llista de notes donades a la partitura. La instrucció de reproducció en cànon `<:N>`fa exactament el mateix però afegeix les notes a una de les veus de la composició. Benvinguts al món dels cànons!
+```
+~~~ Cànon "Escala de Hanoi" ~~~
+Main |:
+    Hanoi
+    Alle_Schlüssel
+:|
+
+~~~ Notes de Hanoi ~~~
+Hanoi |:
+    src <- {C D E F G}
+    dst <- {}
+    aux <- {}
+    HanoiRec #src src dst aux
+:|
+
+HanoiRec n src dst aux |:
+    if n > 0 |:
+        HanoiRec (n - 1) src aux dst
+        note <- src[#src]
+        8< src[#src]
+        dst << note
+        <:1> note
+        HanoiRec (n - 1) aux dst src
+    :|
+:|
+
+~~~ Escala musical ~~~
+Alle_Schlüssel |:
+    note <- A0
+    while note <= C8 |:
+        <:2> note
+        note <- note + 1
+    :|
+:|
+```
+La melodia no té perquè ser la mateixa per les diferents veus. La veu N+1 comença X més tard que la veu N.
+
+## Bach's Crab Canon automàtic

@@ -25,8 +25,10 @@ class BachVisitor(jsbachVisitor):
     # diccionari de tots els procediments
     # amb el nom de tots els seus paràmetres
     procsParameters = {}
-    # llista de les notes afegides per REPRO
+    # llista de les notes afegides per PLAY
     musicSheet = []
+    # llista de les llistes de notes afegides per PLAY i CANONPLAY
+    canonSheet = [[]]
 
     def __init__(self):
         self.nivell = 0
@@ -66,32 +68,51 @@ class BachVisitor(jsbachVisitor):
 
         self.__createMusicSheet()
 
-    def __num2note(self, noteNum):
-        # letter
+    def __note2lilypond(self, noteNum):
+        # cada lletra te un residu entre 7 diferent
+        # el de l'A es 0, el de la B es 1...
         baseValue = noteNum % 7
+        # el codi ascii de la lletra a minúscula es 97
         baseLetter = chr(baseValue + 97)
 
-        # number
+        # revertim la fòrmula
         offsetNum = int((noteNum-baseValue)/7)
         if baseLetter != 'a' and baseLetter != 'b':
             offsetNum = offsetNum+1
 
-        # lilypond notation postfix
+        # en notació lilypond, 
+        # per cada desviació de l'octava central (la 4a) es posa un símbol
         lilyPostfixOffset = 4 - offsetNum - 1
             
+        # depenent si desviació positiva o negativa,
+        # octava més alta o més baixa
         if lilyPostfixOffset >= 0:
             lilyPostfix = ',' * lilyPostfixOffset
         else:
             lilyPostfix = '\'' * -lilyPostfixOffset
 
+        # retornem lletra + postfix de lilypond
         return baseLetter + lilyPostfix
 
     def __createMusicSheet(self):
-        file = open("musica.ly", "w")
-        file.write('\\version "2.20.0" \n\\score { \n\t\\absolute { \n\t\t\\tempo 4 = 120 \n\t\t')
-        for note in self.musicSheet:
-            file.write(self.__num2note(note) + ' ')
-        file.write('\n\t} \n\t\\layout { } \n\t\\midi { } \n}')
+        fileName = "musica.ly"
+        file = open(fileName, "w")
+
+        header = '\\version "2.20.0" \n\\score { \n\t\\new StaffGroup << \n'
+        file.write(header)
+
+        # for every voice 
+        for voice in self.canonSheet:
+            file.write('\n\t\t\\new Staff \\absolute { \n\t\t\t\\tempo 4 = 120 \n\t\t\t')
+        
+            for note in self.musicSheet:
+                # write all lily notes in one line
+                file.write(self.__note2lilypond(note) + ' ')
+            
+            file.write('\n\t\t}')
+
+        footer = '\n\t\t} \n\t>> \n\t\\layout { } \n\t\\midi { } \n}'
+        file.write(footer)
 
 
     # Visit a parse tree produced by jsbachParser#procedureDef.
@@ -313,29 +334,33 @@ class BachVisitor(jsbachVisitor):
         return varId
 
 
-    def __noteValueSpanishNotation(self, noteId):
-        return 0
-
-
     def __noteValueEnglishNotation(self, noteId):
+        # extraiem la lletra de la nota
         letter = noteId[0]
+        # extraiem el nombre de la nota
         if len(noteId) > 1:
             number = int(noteId[1])
+        # si no en té, segons normes musicals de notació, li posem un 4
         else:
             number = 4
 
-        # ord(A) = ascii code for letter A = 65
+        # ord(A) retorna el codi ascii per la lletra A majúscula
+        # com és 65, li restem aquest nombre per tal que en el nostre cas la lletra A retorni 0
         baseValueFromLetter = ord(letter) - 65
+        # sí, una octava musical equival al nombre 7
         octave = 7
 
+        # cas especial, si la lletra no és ni A ni B, l'operació la fem amb --nombre
         if letter not in ['A', 'B']:
             number = number - 1
 
+        # fem el càlcul, com si fos una recta amb pendent
         value = baseValueFromLetter + octave * number
+
+        # possible excepció per limitar les notes [A0-C8]
         if value > 51 or value < 0:
             raise Exception('La nota ' + noteId + ' no existeix.')
         return value
-
 
     # Visit a parse tree produced by jsbachParser#ident.
     def visitIdent(self, ctx:jsbachParser.IdentContext):
