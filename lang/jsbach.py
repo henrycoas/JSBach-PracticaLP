@@ -12,14 +12,16 @@ else:
     from jsbachVisitor import jsbachVisitor
     from jsbachLexer import jsbachLexer
 
-# This class defines a complete generic visitor for a parse tree produced by jsbachParser.
+# This class defines a complete generic visitor for a parse tree produced
+# by jsbachParser.
+
 
 class BachVisitor(jsbachVisitor):
 
-    # llista (stack) de scopes, 
-    # l'última llista és l'actual 
+    # llista (stack) de scopes,
+    # l'última llista és l'actual
     allScopes = []
-    # diccionari de tots els procediments 
+    # diccionari de tots els procediments
     # amb el seu context stmts
     procsStmtsContexts = {}
     # diccionari de tots els procediments
@@ -33,11 +35,10 @@ class BachVisitor(jsbachVisitor):
     def __init__(self):
         self.nivell = 0
 
-
     # Visit a parse tree produced by jsbachParser#root.
-    def visitRoot(self, ctx:jsbachParser.RootContext):
+    def visitRoot(self, ctx: jsbachParser.RootContext):
         self.visitChildren(ctx)
-        
+
         # Making sure Main is the last thing to visit
         if len(sys.argv) == 2:
             self.allScopes.append({})
@@ -53,7 +54,13 @@ class BachVisitor(jsbachVisitor):
             try:
                 # EXC: #params passed != #params needed
                 if len(self.procsParameters[procId]) != len(paramsInput):
-                    raise Exception('La crida a ' + procId + ' requereix ' + str(len(self.procsParameters[procId])) + ' paràmetre, no ' + str(len(paramsInput)) + '.')
+                    raise Exception('La crida a ' +
+                                    procId +
+                                    ' requereix ' +
+                                    str(len(self.procsParameters[procId])) +
+                                    ' paràmetre, no ' +
+                                    str(len(paramsInput)) +
+                                    '.')
 
                 newScope = {}
                 for i in range(len(paramsInput)):
@@ -76,14 +83,14 @@ class BachVisitor(jsbachVisitor):
         baseLetter = chr(baseValue + 97)
 
         # revertim la fòrmula
-        offsetNum = int((noteNum-baseValue)/7)
+        offsetNum = int((noteNum - baseValue) / 7)
         if baseLetter != 'a' and baseLetter != 'b':
-            offsetNum = offsetNum+1
+            offsetNum = offsetNum + 1
 
-        # en notació lilypond, 
+        # en notació lilypond,
         # per cada desviació de l'octava central (la 4a) es posa un símbol
         lilyPostfixOffset = 4 - offsetNum - 1
-            
+
         # depenent si desviació positiva o negativa,
         # octava més alta o més baixa
         if lilyPostfixOffset >= 0:
@@ -103,25 +110,25 @@ class BachVisitor(jsbachVisitor):
 
         voicesIds = list(self.canonSheet.keys())
         currentVoice = 0
-        # for every voice 
+        # for every voice
         for voice in self.canonSheet:
-            file.write('\n\t\t\\new Staff \\absolute { \n\t\t\t\\tempo 4 = 120 \n\t\t\t')
+            file.write(
+                '\n\t\t\\new Staff \\absolute { \n\t\t\t\\tempo 4 = 120 \n\t\t\t')
             file.write('r8 ' * int(voicesIds[currentVoice]))
             file.write('r4 ' * int(voicesIds[currentVoice]))
-            
+
             for note in self.canonSheet[voice]:
                 # write all lily notes in one line
                 file.write(self.__note2lilypond(note) + ' ')
-            
+
             file.write('\n\t\t}')
             currentVoice = currentVoice + 1
 
         footer = '\n\t>> \n\t\\layout { } \n\t\\midi { } \n}'
         file.write(footer)
 
-
     # Visit a parse tree produced by jsbachParser#procedureDef.
-    def visitProcedureDef(self, ctx:jsbachParser.ProcedureDefContext):
+    def visitProcedureDef(self, ctx: jsbachParser.ProcedureDefContext):
         procId = ctx.PROCID().getText()
         paramList = self.visit(ctx.paramsListDef())
 
@@ -131,43 +138,39 @@ class BachVisitor(jsbachVisitor):
         self.procsStmtsContexts[procId] = ctx.stmts().stmt()
         self.procsParameters[procId] = paramList
 
-
     # Visit a parse tree produced by jsbachParser#paramsListDef.
-    def visitParamsListDef(self, ctx:jsbachParser.ParamsListDefContext):
+    def visitParamsListDef(self, ctx: jsbachParser.ParamsListDefContext):
         params = []
         for p in ctx.VARID():
             pTxt = p.getText()
             if pTxt in params:
-                raise Exception('Paràmetres formals repetits amb el nom ' + pTxt + '.')
+                raise Exception(
+                    'Paràmetres formals repetits amb el nom ' + pTxt + '.')
             params.append(pTxt)
         return params
 
-
     # Visit a parse tree produced by jsbachParser#assignStmt.
-    def visitAssignStmt(self, ctx:jsbachParser.AssignStmtContext):
+    def visitAssignStmt(self, ctx: jsbachParser.AssignStmtContext):
         expr = self.visit(ctx.expr())
         leftExpr = self.visit(ctx.leftExpr())
         self.allScopes[-1][leftExpr] = expr
 
-
     # Visit a parse tree produced by jsbachParser#writeStmt.
-    def visitWriteStmt(self, ctx:jsbachParser.WriteStmtContext):
+    def visitWriteStmt(self, ctx: jsbachParser.WriteStmtContext):
         l = list(ctx.getChildren())
         # l[0] is WRITE token
         for out in l[1:]:
             print(self.visit(out), end=" ")
         print()
 
-
     # Visit a parse tree produced by jsbachParser#readStmt.
-    def visitReadStmt(self, ctx:jsbachParser.ReadStmtContext):
+    def visitReadStmt(self, ctx: jsbachParser.ReadStmtContext):
         id = ctx.VARID().getText()
         inputValue = int(input())
         self.allScopes[-1][id] = inputValue
 
-
     # Visit a parse tree produced by jsbachParser#canonPlayStmt.
-    def visitCanonPlayStmt(self, ctx:jsbachParser.CanonPlayStmtContext):
+    def visitCanonPlayStmt(self, ctx: jsbachParser.CanonPlayStmtContext):
         note = self.visit(ctx.expr())
         voice = ctx.NUMBER().getText()
         try:
@@ -177,9 +180,8 @@ class BachVisitor(jsbachVisitor):
         except KeyError:
             self.canonSheet[voice] = note
 
-
     # Visit a parse tree produced by jsbachParser#playStmt.
-    def visitPlayStmt(self, ctx:jsbachParser.PlayStmtContext):
+    def visitPlayStmt(self, ctx: jsbachParser.PlayStmtContext):
         note = self.visit(ctx.expr())
         try:
             if not isinstance(note, list):
@@ -188,9 +190,8 @@ class BachVisitor(jsbachVisitor):
         except KeyError:
             self.canonSheet['0'] = note
 
-
     # Visit a parse tree produced by jsbachParser#ifStmt.
-    def visitIfStmt(self, ctx:jsbachParser.IfStmtContext):
+    def visitIfStmt(self, ctx: jsbachParser.IfStmtContext):
         boolExpr = self.visit(ctx.expr())
         if boolExpr == 1:
             self.visit(ctx.stmts(0))
@@ -198,23 +199,21 @@ class BachVisitor(jsbachVisitor):
             if ctx.ELSE():
                 self.visit(ctx.stmts(1))
 
-
     # Visit a parse tree produced by jsbachParser#whileStmt.
-    def visitWhileStmt(self, ctx:jsbachParser.WhileStmtContext):
+    def visitWhileStmt(self, ctx: jsbachParser.WhileStmtContext):
         while self.visit(ctx.expr()):
             self.visit(ctx.stmts())
 
     # Visit a parse tree produced by jsbachParser#paramsListCall.
-    def visitParamsListCall(self, ctx:jsbachParser.ParamsListCallContext):
+    def visitParamsListCall(self, ctx: jsbachParser.ParamsListCallContext):
         paramsCtx = list(ctx.getChildren())
         params = []
         for p in paramsCtx:
             params.append(self.visit(p))
         return params
 
-
     # Visit a parse tree produced by jsbachParser#procCallStmt.
-    def visitProcCallStmt(self, ctx:jsbachParser.ProcCallStmtContext):
+    def visitProcCallStmt(self, ctx: jsbachParser.ProcCallStmtContext):
         procId = ctx.PROCID().getText()
         procStmtsCtx = self.procsStmtsContexts[procId]
         # EXC: procedureName does not exist
@@ -222,7 +221,14 @@ class BachVisitor(jsbachVisitor):
         myParams = self.visit(ctx.paramsListCall())
         # EXC: #params passed != #params needed
         if len(procParams) != len(myParams):
-            raise Exception('La crida a ' + procId + ' requereix ' + len(procParams) + ', no ' + len(myParams) + '.')
+            raise Exception(
+                'La crida a ' +
+                procId +
+                ' requereix ' +
+                len(procParams) +
+                ', no ' +
+                len(myParams) +
+                '.')
 
         newScope = {}
         for i in range(len(myParams)):
@@ -237,7 +243,7 @@ class BachVisitor(jsbachVisitor):
         self.allScopes.pop()
 
     # Visit a parse tree produced by jsbachParser#concatStmt.
-    def visitConcatStmt(self, ctx:jsbachParser.ConcatStmtContext):
+    def visitConcatStmt(self, ctx: jsbachParser.ConcatStmtContext):
         varId = ctx.VARID().getText()
         newElem = self.visit(ctx.expr())
         try:
@@ -245,50 +251,47 @@ class BachVisitor(jsbachVisitor):
         except KeyError:
             raise Exception('La llista ' + varId + ' no existeix.')
 
-
     # Visit a parse tree produced by jsbachParser#cutStmt.
-    def visitCutStmt(self, ctx:jsbachParser.CutStmtContext):
+    def visitCutStmt(self, ctx: jsbachParser.CutStmtContext):
         varId = ctx.VARID().getText()
         index = self.visit(ctx.expr())
         try:
-            del self.allScopes[-1][varId][index-1]
+            del self.allScopes[-1][varId][index - 1]
         except KeyError:
             raise Exception('La llista ' + varId + ' no existeix.')
         except IndexError:
-            raise Exception('Accés a índex inexistent ' + str(index) + ' de la llista ' + varId + ', de tamany ' + str(len(self.allScopes[-1][varId])) + '.')
+            raise Exception('Accés a índex inexistent ' + str(index) + ' de la llista ' +
+                            varId + ', de tamany ' + str(len(self.allScopes[-1][varId])) + '.')
 
     # Visit a parse tree produced by jsbachParser#arrayLengthExpr.
-    def visitArrayLengthExpr(self, ctx:jsbachParser.ArrayLengthExprContext):
+    def visitArrayLengthExpr(self, ctx: jsbachParser.ArrayLengthExprContext):
         varId = ctx.VARID().getText()
         try:
             return len(self.allScopes[-1][varId])
         except KeyError:
             raise Exception('La llista ' + varId + ' no existeix.')
 
-
     # Visit a parse tree produced by jsbachParser#unaryExpr.
-    def visitUnaryExpr(self, ctx:jsbachParser.UnaryExprContext):
+    def visitUnaryExpr(self, ctx: jsbachParser.UnaryExprContext):
         expr = self.visit(ctx.expr())
         if ctx.PLUS():
             return expr
         elif ctx.MINUS():
             return -expr
 
-
     # Visit a parse tree produced by jsbachParser#valueExpr.
-    def visitValueExpr(self, ctx:jsbachParser.ValueExprContext):
+    def visitValueExpr(self, ctx: jsbachParser.ValueExprContext):
         # len(l) == 1
         if ctx.NUMBER():
             return int(ctx.NUMBER().getText())
         elif ctx.STRING():
-            return ctx.STRING().getText().replace('"','')
+            return ctx.STRING().getText().replace('"', '')
         elif ctx.BOOLEAN():
             return int(ctx.BOOLEAN().getText())
 
-
     # Visit a parse tree produced by jsbachParser#relationalExpr.
-    def visitRelationalExpr(self, ctx:jsbachParser.RelationalExprContext):
-        expr1, op, expr2 =  list(ctx.getChildren())
+    def visitRelationalExpr(self, ctx: jsbachParser.RelationalExprContext):
+        expr1, op, expr2 = list(ctx.getChildren())
         if ctx.EQ():
             retValue = self.visit(expr1) == self.visit(expr2)
         elif ctx.NEQ():
@@ -303,34 +306,32 @@ class BachVisitor(jsbachVisitor):
             retValue = self.visit(expr1) < self.visit(expr2)
         return 1 if retValue else 0
 
-
     # Visit a parse tree produced by jsbachParser#parenthesesExpr.
-    def visitParenthesesExpr(self, ctx:jsbachParser.ParenthesesExprContext):
+    def visitParenthesesExpr(self, ctx: jsbachParser.ParenthesesExprContext):
         return self.visit(ctx.expr())
 
     # Visit a parse tree produced by jsbachParser#arrayAccessExpr.
-    def visitArrayAccessExpr(self, ctx:jsbachParser.ArrayAccessExprContext):
+    def visitArrayAccessExpr(self, ctx: jsbachParser.ArrayAccessExprContext):
         varId = ctx.VARID().getText()
         index = self.visit(ctx.expr())
         try:
-            return self.allScopes[-1][varId][index-1]
+            return self.allScopes[-1][varId][index - 1]
         except KeyError:
             raise Exception('La llista ' + varId + ' no existeix.')
         except IndexError:
-            raise Exception('Accés a índex inexistent ' + str(index) + ' de la llista ' + varId + ', de tamany ' + str(len(self.allScopes[-1][varId])) + '.')
-
-        
+            raise Exception('Accés a índex inexistent ' + str(index) + ' de la llista ' +
+                            varId + ', de tamany ' + str(len(self.allScopes[-1][varId])) + '.')
 
     # Visit a parse tree produced by jsbachParser#arrayExpr.
-    def visitArrayExpr(self, ctx:jsbachParser.ArrayExprContext):
+
+    def visitArrayExpr(self, ctx: jsbachParser.ArrayExprContext):
         return self.visit(ctx.array())
 
-
     # Visit a parse tree produced by jsbachParser#arithmeticExpr.
-    def visitArithmeticExpr(self, ctx:jsbachParser.ArithmeticExprContext):
+    def visitArithmeticExpr(self, ctx: jsbachParser.ArithmeticExprContext):
         # len(list) == 3
         expr1, op, expr2 = list(ctx.getChildren())
-        
+
         if ctx.PLUS():
             return self.visit(expr1) + self.visit(expr2)
         elif ctx.MINUS():
@@ -341,16 +342,15 @@ class BachVisitor(jsbachVisitor):
             try:
                 return self.visit(expr1) / self.visit(expr2)
             except ZeroDivisionError:
-                raise Exception("Division durch Null (divisió entre 0, pels que no saben alemà)")
+                raise Exception(
+                    "Division durch Null (divisió entre 0, pels que no saben alemà)")
         elif ctx.MOD():
             return self.visit(expr1) % self.visit(expr2)
 
-
     # Visit a parse tree produced by jsbachParser#LeftExprId.
-    def visitLeftExpr(self, ctx:jsbachParser.LeftExprContext):
+    def visitLeftExpr(self, ctx: jsbachParser.LeftExprContext):
         varId = ctx.VARID().getText()
         return varId
-
 
     def __noteValueEnglishNotation(self, noteId):
         # extraiem la lletra de la nota
@@ -363,12 +363,14 @@ class BachVisitor(jsbachVisitor):
             number = 4
 
         # ord(A) retorna el codi ascii per la lletra A majúscula
-        # com és 65, li restem aquest nombre per tal que en el nostre cas la lletra A retorni 0
+        # com és 65, li restem aquest nombre per tal que en el nostre cas la
+        # lletra A retorni 0
         baseValueFromLetter = ord(letter) - 65
         # sí, una octava musical equival al nombre 7
         octave = 7
 
-        # cas especial, si la lletra no és ni A ni B, l'operació la fem amb --nombre
+        # cas especial, si la lletra no és ni A ni B, l'operació la fem amb
+        # --nombre
         if letter not in ['A', 'B']:
             number = number - 1
 
@@ -381,7 +383,7 @@ class BachVisitor(jsbachVisitor):
         return value
 
     # Visit a parse tree produced by jsbachParser#ident.
-    def visitIdent(self, ctx:jsbachParser.IdentContext):
+    def visitIdent(self, ctx: jsbachParser.IdentContext):
         if ctx.VARID():
             varId = ctx.VARID().getText()
             try:
@@ -394,7 +396,7 @@ class BachVisitor(jsbachVisitor):
             return self.__noteValueEnglishNotation(noteId)
 
     # Visit a parse tree produced by jsbachParser#array.
-    def visitArray(self, ctx:jsbachParser.ArrayContext):
+    def visitArray(self, ctx: jsbachParser.ArrayContext):
         elems = []
         if ctx.NUMBER():
             for num in ctx.NUMBER():
@@ -403,7 +405,8 @@ class BachVisitor(jsbachVisitor):
             for note in ctx.NOTE():
                 elems.append(self.__noteValueEnglishNotation(note.getText()))
         return elems
-        
+
+
 def __generateMusic():
     # Lilypond
     if os.system('lilypond musica.ly') == 0:
@@ -420,7 +423,8 @@ def __generateMusic():
         return 2
 
     # ffmpeg
-    if os.system('ffmpeg -y -i musica.wav -codec:a libmp3lame -qscale:a 2 musica.mp3') == 0:
+    if os.system(
+            'ffmpeg -y -i musica.wav -codec:a libmp3lame -qscale:a 2 musica.mp3') == 0:
         print('---ffmpeg: OK')
     else:
         print('---ffmpeg: NO')
@@ -446,8 +450,10 @@ def __generateMusic():
     else:
         return 5
 
-if __name__== "__main__":
-    if os.system('antlr4 -Dlanguage=Python3 -no-listener -visitor jsbach.g4') == 0:
+
+if __name__ == "__main__":
+    if os.system(
+            'antlr4 -Dlanguage=Python3 -no-listener -visitor jsbach.g4') == 0:
         print('---Compilació de la gramàtica i generació de la plantilla del visitor: OK')
     else:
         print('---Compilació de la gramàtica i generació de la plantilla del visitor: NO')
@@ -463,7 +469,7 @@ if __name__== "__main__":
 
     visitor = BachVisitor()
     visitor.visit(tree)
-    
+
     if __generateMusic():
         print('---Execució interrompuda o acabada amb errors.')
     else:

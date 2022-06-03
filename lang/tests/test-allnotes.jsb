@@ -1,3 +1,7 @@
+Main |:
+    AllNotes
+:|
+
 AllNotes |:
     note <- A0
     while note <= C8 |:

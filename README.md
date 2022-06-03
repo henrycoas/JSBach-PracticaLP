@@ -109,8 +109,7 @@ Una part molt important són les estructures de dades que he afegit dins de la c
 ## Sobre notes i els seus valors
 Per fer transformacions entre notes en format string i valors enters, vaig considerar dues possibilitats: consultar el seu valor en un diccionari o bé calcular el seu valor quan es necessités. Vaig descartar la primera opció, doncs no volia haver de crear un diccionari tant gran. Així que per aquesta raó, em vaig posar mans a l'obra per aconseguir la fòrmula.
 
-### Què sé de música?
-De coses tècniques, no massa (almenys ara mateix). Però em vaig estar posant al dia i vaig arribar a què, en la notació anglesa:
+Em vaig estar posant al dia amb la notació anglesa i vaig arribar a què, en la notació anglesa:
 ```
 A0=0    A1=7    A2=14   .       .
 B0=1    B1=8    B2=15   .
@@ -179,7 +178,7 @@ HanoiRec n src dst aux |:
         note <- src[#src]
         8< src[#src]
         dst << note
-        <:1> note
+        <::1> note
         HanoiRec (n - 1) aux dst src
     :|
 :|
@@ -188,7 +187,7 @@ HanoiRec n src dst aux |:
 Alle_Schlüssel |:
     note <- A0
     while note <= C8 |:
-        <:2> note
+        <::0> note
         note <- note + 1
     :|
 :|
