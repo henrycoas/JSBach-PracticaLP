@@ -160,7 +160,7 @@ def __noteValueEnglishNotation(self, noteId):
 Seguint amb la mania de fer com si com més llarga l'estructura if més diners em costa, vaig decidir buscar la manera de calcular la manera de passar d'un valor enter a una nota en notació Lilypond.
 
 ```python
-def __num2note(self, noteNum):
+def __num2lilypond(self, noteNum):
     # cada lletra te un residu entre 7 diferent
     # la A es 0, la B es 1...
     baseValue = noteNum % 7
@@ -212,7 +212,7 @@ Utilitzant Lilipond per generar les partitures i Timidity++ i ffmpeg per generar
 
 # Extensions
 ## Instrucció de reproducció en cànon
-La instrucció de reproducció `<:>` afegeix la nota o la llista de notes donades a la partitura. La instrucció de reproducció en cànon `<:N>`fa exactament el mateix però afegeix les notes a una de les veus de la composició. Benvinguts al món dels cànons!
+La instrucció de reproducció `<:>` afegeix la nota o la llista de notes donades a la partitura. La instrucció de reproducció en cànon `<::N>`fa exactament el mateix però afegeix les notes a una de les veus de la composició. Benvinguts al món dels cànons!
 ```
 ~~~ Cànon "Escala de Hanoi" ~~~
 Main |:

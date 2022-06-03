@@ -27,8 +27,8 @@ class BachVisitor(jsbachVisitor):
     procsParameters = {}
     # llista de les notes afegides per PLAY
     musicSheet = []
-    # llista de les llistes de notes afegides per PLAY i CANONPLAY
-    canonSheet = [[]]
+    # diccionari de les llistes de notes afegides per PLAY i CANONPLAY
+    canonSheet = {}
 
     def __init__(self):
         self.nivell = 0
@@ -98,20 +98,25 @@ class BachVisitor(jsbachVisitor):
         fileName = "musica.ly"
         file = open(fileName, "w")
 
-        header = '\\version "2.20.0" \n\\score { \n\t\\new StaffGroup << \n'
+        header = '\\version "2.20.0" \n\\score { \n\t\\new StaffGroup <<'
         file.write(header)
 
+        voicesIds = list(self.canonSheet.keys())
+        currentVoice = 0
         # for every voice 
         for voice in self.canonSheet:
             file.write('\n\t\t\\new Staff \\absolute { \n\t\t\t\\tempo 4 = 120 \n\t\t\t')
-        
-            for note in self.musicSheet:
+            file.write('r8 ' * int(voicesIds[currentVoice]))
+            file.write('r4 ' * int(voicesIds[currentVoice]))
+            
+            for note in self.canonSheet[voice]:
                 # write all lily notes in one line
                 file.write(self.__note2lilypond(note) + ' ')
             
             file.write('\n\t\t}')
+            currentVoice = currentVoice + 1
 
-        footer = '\n\t\t} \n\t>> \n\t\\layout { } \n\t\\midi { } \n}'
+        footer = '\n\t>> \n\t\\layout { } \n\t\\midi { } \n}'
         file.write(footer)
 
 
@@ -161,14 +166,27 @@ class BachVisitor(jsbachVisitor):
         self.allScopes[-1][id] = inputValue
 
 
+    # Visit a parse tree produced by jsbachParser#canonPlayStmt.
+    def visitCanonPlayStmt(self, ctx:jsbachParser.CanonPlayStmtContext):
+        note = self.visit(ctx.expr())
+        voice = ctx.NUMBER().getText()
+        try:
+            if not isinstance(note, list):
+                note = [note]
+            self.canonSheet[voice].extend(note)
+        except KeyError:
+            self.canonSheet[voice] = note
+
+
     # Visit a parse tree produced by jsbachParser#playStmt.
     def visitPlayStmt(self, ctx:jsbachParser.PlayStmtContext):
         note = self.visit(ctx.expr())
-        if isinstance(note, list):
-            self.musicSheet.extend(note)
-            # si aquí hi hagués una llista, podria ser un acord de Lilypond
-        else:
-            self.musicSheet.append(note)
+        try:
+            if not isinstance(note, list):
+                note = [note]
+            self.canonSheet['0'].extend(note)
+        except KeyError:
+            self.canonSheet['0'] = note
 
 
     # Visit a parse tree produced by jsbachParser#ifStmt.
@@ -340,7 +358,7 @@ class BachVisitor(jsbachVisitor):
         # extraiem el nombre de la nota
         if len(noteId) > 1:
             number = int(noteId[1])
-        # si no en té, segons normes musicals de notació, li posem un 4
+        # si no té nombre, segons normes de notació musical, li posem un 4
         else:
             number = 4
 
@@ -369,7 +387,8 @@ class BachVisitor(jsbachVisitor):
             try:
                 return self.allScopes[-1][varId]
             except KeyError:
-                raise Exception('La variable ' + varId + ' no existeix.')
+                self.allScopes[-1][varId] = 0
+                return 0
         elif ctx.NOTE():
             noteId = ctx.NOTE().getText()
             return self.__noteValueEnglishNotation(noteId)

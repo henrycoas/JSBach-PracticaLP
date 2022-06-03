@@ -27,8 +27,8 @@ stmt
     : READ VARID                                                # readStmt
     | WRITE expr+                                               # writeStmt
     | CRABIFY expr                                              # crabifyStmt
-    | CANONPLAY expr                                            # canonPlayStmt
     | PLAY expr                                                 # playStmt
+    | CANONPLAY NUMBER '>' expr                         # canonPlayStmt
     | IF expr LPAREN stmts RPAREN (ELSE LPAREN stmts RPAREN)?   # ifStmt
     | WHILE expr LPAREN stmts RPAREN                            # whileStmt
     | PROCID paramsListCall                                     # procCallStmt
@@ -63,6 +63,7 @@ array
     : '{' (NUMBER | NOTE)* '}'
     ;
 
+
 /// Lexer Rules (part lèxica)
 
 ASSIGN  : '<-' ;
@@ -70,7 +71,7 @@ ASSIGN  : '<-' ;
 READ    : '<?>' ;
 WRITE   : '<!>' ;
 PLAY    : '<:>' ;
-CANONPLAY : '<:' DIGIT '>' ;
+CANONPLAY : '<::';
 CRABIFY : '<º,,º>' ;
 
 // ---Instruccions condicionals i iteratives

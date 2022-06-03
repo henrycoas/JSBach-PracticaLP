@@ -49,13 +49,13 @@ class jsbachVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by jsbachParser#canonPlayStmt.
-    def visitCanonPlayStmt(self, ctx:jsbachParser.CanonPlayStmtContext):
+    # Visit a parse tree produced by jsbachParser#playStmt.
+    def visitPlayStmt(self, ctx:jsbachParser.PlayStmtContext):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by jsbachParser#playStmt.
-    def visitPlayStmt(self, ctx:jsbachParser.PlayStmtContext):
+    # Visit a parse tree produced by jsbachParser#canonPlayStmt.
+    def visitCanonPlayStmt(self, ctx:jsbachParser.CanonPlayStmtContext):
         return self.visitChildren(ctx)
 
 
