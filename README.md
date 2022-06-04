@@ -105,7 +105,7 @@ Una part molt important són les estructures de dades que he afegit dins de la c
     - Quan s'acaba el programa, és el que es converteix en partitura.
 - `canonSheet`:
     - Substitueix a `musicSheet` després d'haver fet l'extensió de la funcionalitat de cànons en JSBach.
-    - Diccionari de totes les veus del cànon en format llistes de notes indexades per el seu número de veu.
+    - **Diccionari** de totes les veus del cànon en format **llistes de notes indexades** pel seu número de veu.
     - Quan s'acaba el programa, és el que es converteix en les diferents veus de la partitura.
 
 ## Sobre notes i els seus valors
@@ -159,6 +159,8 @@ Utilitzant la versió 2.20.0 de Lilipond per generar les partitures i Timidity++
 La instrucció de reproducció `<:>` afegeix la nota o la llista de notes donades a la partitura. La instrucció de reproducció en cànon `<::N>` fa exactament el mateix però afegeix les notes a la veu N de la composició. Benvinguts al món dels cànons!
 
 La instrucció de reproducció `<:>` segueix funcionant, el que ara afegeix les notes a la partitura de la primera veu (la número zero), per tant, el seu equivalent en instrucció de reproducció en cànon seria `<::0>`.
+
+En el següent cànon es toquen les "notes de Hanoi" junt amb l'escala musical.
 ```
 ~~~ Cànon "Escala de Hanoi" ~~~
 Main |:
