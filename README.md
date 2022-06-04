@@ -22,10 +22,12 @@ Tot ja es fa desde el codi. A l'hora de reproduir la música, fa comprovacions d
 
 Per tant, només cal executar l'intèrpret amb un fitxer d'entrada i, opcionalment, el primer procediment de l'arxiu d'entrada a ser executat:
 ```bash
-python3 jsbach.py input.jsb [FirstProc]
+python3 jsbach.py input.jsb [FirstProcedure]
 ```
 
 Si no es volgués generar la partitura per acabar tocant la música, es pot comentar la crida a `__generateMusic()` dins del `main` de `jsbach.py`.
+
+Incís: Tot el desenvolupament del projecte s'ha fet en un entorn Linux.
 
 # Creació de la gramàtica
 
@@ -102,7 +104,7 @@ Una part molt important són les estructures de dades que he afegit dins de la c
     - **Llista** de les **notes** afegides per la instrucció de reproducció.
     - Quan s'acaba el programa, és el que es converteix en partitura.
 - `canonSheet`:
-    - Substitueix a `musicSheet` després d'haver fet una extensió de les funcionalitats de JSBach.
+    - Substitueix a `musicSheet` després d'haver fet l'extensió de la funcionalitat de cànons en JSBach.
     - Diccionari de totes les veus del cànon en format llistes de notes indexades per el seu número de veu.
     - Quan s'acaba el programa, és el que es converteix en les diferents veus de la partitura.
 
@@ -150,11 +152,11 @@ Per tant, amb aquesta fòrmula/pseudo-codi ja m'és possible conèixer el valor 
 
 # Generació dels fitxers d'àudio
 
-Utilitzant Lilipond per generar les partitures i Timidity++ i ffmpeg per generar els WAV i MP3. Aquest procés es realitza dins de la funció `__generateMusic()`.
+Utilitzant la versió 2.20.0 de Lilipond per generar les partitures i Timidity++ i ffmpeg per generar els WAV i MP3. Aquest procés es realitza dins de la funció `__generateMusic()`. 
 
 # Extensions
 ## Instrucció de reproducció en cànon
-La instrucció de reproducció `<:>` afegeix la nota o la llista de notes donades a la partitura. La instrucció de reproducció en cànon `<::N>`fa exactament el mateix però afegeix les notes a una de les veus de la composició. Benvinguts al món dels cànons!
+La instrucció de reproducció `<:>` afegeix la nota o la llista de notes donades a la partitura. La instrucció de reproducció en cànon `<::N>` fa exactament el mateix però afegeix les notes a la veu N de la composició. Benvinguts al món dels cànons!
 
 La instrucció de reproducció `<:>` segueix funcionant, el que ara afegeix les notes a la partitura de la primera veu (la número zero), per tant, el seu equivalent en instrucció de reproducció en cànon seria `<::0>`.
 ```
@@ -192,4 +194,4 @@ Alle_Schlüssel |:
     :|
 :|
 ```
-La melodia no té perquè ser la mateixa per les diferents veus. La veu N+1 comença un silenci de negra+corxera més tard que la veu N.
+La melodia no té perquè ser la mateixa per les diferents veus. La veu N+1 comença un silenci de corxera+negra més tard que la veu N.

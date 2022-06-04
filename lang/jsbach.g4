@@ -5,7 +5,8 @@ grammar jsbach;
 // per processar el final de l'arxiu
 // un arxiu es un conjunt de procediments
 root 
-    : procedureDef+ EOF ;
+    : procedureDef+ EOF 
+    ;
 
 procedureDef
     : PROCID paramsListDef LPAREN stmts RPAREN
@@ -26,9 +27,8 @@ paramsListCall
 stmt 
     : READ VARID                                                # readStmt
     | WRITE expr+                                               # writeStmt
-    | CRABIFY expr                                              # crabifyStmt
     | PLAY expr                                                 # playStmt
-    | CANONPLAY NUMBER '>' expr                         # canonPlayStmt
+    | CANONPLAY NUMBER '>' expr                                 # canonPlayStmt
     | IF expr LPAREN stmts RPAREN (ELSE LPAREN stmts RPAREN)?   # ifStmt
     | WHILE expr LPAREN stmts RPAREN                            # whileStmt
     | PROCID paramsListCall                                     # procCallStmt
@@ -71,8 +71,7 @@ ASSIGN  : '<-' ;
 READ    : '<?>' ;
 WRITE   : '<!>' ;
 PLAY    : '<:>' ;
-CANONPLAY : '<::';
-CRABIFY : '<º,,º>' ;
+CANONPLAY : '<::' ;
 
 // ---Instruccions condicionals i iteratives
 IF      : 'if' ;
@@ -110,7 +109,7 @@ NOTE    : ('A'|'B'|'C'|'D'|'E'|'F'|'G') NUMNOTE?;
 fragment
 DIGIT   : [0-9] ;
 fragment
-LETTER  : [a-zA-Z] ;
+WORD    : [a-zA-Z\u0080-\u00FF]+ ;
 fragment
 LOWERCASE  : [a-z] ;
 fragment
@@ -118,16 +117,14 @@ UPPERCASE  : [A-Z] ;
 
 NUMBER  : (DIGIT)+ ;
 BOOLEAN : ('0' | '1') ;
-PROCID  : UPPERCASE (LETTER | DIGIT | '-' | '_')* ;
-VARID   : LOWERCASE (LETTER | DIGIT | '-' | '_')* ;
+PROCID  : UPPERCASE (WORD | DIGIT | '-' | '_')* ;
+VARID   : LOWERCASE (WORD | DIGIT | '-' | '_')* ;
 
 fragment
 ESC_SEQ : '\\' ('b'|'t'|'n'|'f'|'r'|'"'|'\''|'\\') ;
 
 // Strings (in quotes) with escape sequences
 STRING  : '"' ( ESC_SEQ | ~('\\'|'"') )* '"' ;
-
-WORD    : [a-zA-Z\u0080-\u00FF]+ ;
 
 WS      : [ \t\n]+ -> skip ;
 

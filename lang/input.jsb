@@ -1,9 +1,9 @@
 Main |:
-    Hanoi
+    Hánoi
     Alle_Schlussel
 :|
 
-Hanoi |:
+Hánoi |:
     src <- {C D E F G}
     dst <- {}
     aux <- {}
@@ -16,8 +16,7 @@ HanoiRec n src dst aux |:
         note <- src[#src]
         8< src[#src]
         dst << note
-        <::2> note
-        <::3> note
+        <::1> note
         HanoiRec (n - 1) aux dst src
     :|
 :|
@@ -25,7 +24,7 @@ HanoiRec n src dst aux |:
 Alle_Schlussel |:
     note <- A0
     while note <= C8 |:
-        <::1> note
+        <:> note
         note <- note + 1
     :|
 :|

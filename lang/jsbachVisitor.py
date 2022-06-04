@@ -44,11 +44,6 @@ class jsbachVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by jsbachParser#crabifyStmt.
-    def visitCrabifyStmt(self, ctx:jsbachParser.CrabifyStmtContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by jsbachParser#playStmt.
     def visitPlayStmt(self, ctx:jsbachParser.PlayStmtContext):
         return self.visitChildren(ctx)

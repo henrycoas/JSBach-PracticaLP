@@ -58,7 +58,7 @@ class BachVisitor(jsbachVisitor):
                                     procId +
                                     ' requereix ' +
                                     str(len(self.procsParameters[procId])) +
-                                    ' paràmetre, no ' +
+                                    ' paràmetres, no ' +
                                     str(len(paramsInput)) +
                                     '.')
 
@@ -369,8 +369,8 @@ class BachVisitor(jsbachVisitor):
         # sí, una octava musical equival al nombre 7
         octave = 7
 
-        # cas especial, si la lletra no és ni A ni B, l'operació la fem amb
-        # --nombre
+        # cas especial, si la lletra no és ni A ni B,
+        # l'operació la fem amb --nombre
         if letter not in ['A', 'B']:
             number = number - 1
 
@@ -458,7 +458,7 @@ if __name__ == "__main__":
     else:
         print('---Compilació de la gramàtica i generació de la plantilla del visitor: NO')
 
-    input_stream = FileStream(sys.argv[1])
+    input_stream = FileStream(sys.argv[1], encoding='utf-8')
 
     lexer = jsbachLexer(input_stream)
     token_stream = CommonTokenStream(lexer)
