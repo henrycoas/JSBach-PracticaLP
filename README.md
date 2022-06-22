@@ -8,6 +8,8 @@ En paraules de l'enunciat, l'objectiu d'aquesta pràctica és implementar un dob
 
 És un doble intèrpret perquè funciona en el sentit informàtic (interpreta un programa) i en el sentit musical (interpreta una peça de música).
 
+En aquest [link](https://github.com/jordi-petit/lp-jsbach-2022) s'hi troba l'enunciat original de la Pràctica, del repositori d'en Jordi Petit. Jo en aquest README explico com funciona la meva implementació de la Pràctica i alguns punts que considero importants.
+
 # Compilació i execució
 
 Dins del codi en Python, hi ha diverses crides a ```os.system()``` que executen totes les instruccions necessàries per l'execució: 
@@ -28,6 +30,8 @@ python3 jsbach.py input.jsb [FirstProcedure]
 Si no es volgués generar la partitura per acabar tocant la música, es pot comentar la crida a `__generateMusic()` dins del `main` de `jsbach.py`.
 
 Incís: Tot el desenvolupament del projecte s'ha fet en un entorn Linux.
+
+**Requeriments de programes** (són fàcilment instal·lables): **Python3, ANTLR4, Lilipond, Timidity++, ffmpeg**.
 
 # Creació de la gramàtica
 
